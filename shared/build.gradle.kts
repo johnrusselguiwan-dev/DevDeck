@@ -3,10 +3,21 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.kotlinSerialization)
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.skiko:skiko:0.8.18")
+        force("org.jetbrains.skiko:skiko-wasm-js:0.8.18")
+        force("org.jetbrains.skiko:skiko-js-wasm-runtime:0.8.18")
+        force("org.jetbrains.compose.runtime:runtime:1.7.3")
+        force("org.jetbrains.compose.ui:ui:1.7.3")
+        force("org.jetbrains.compose.foundation:foundation:1.7.3")
+        force("org.jetbrains.compose.material3:material3:1.7.3")
+    }
 }
 
 kotlin {
@@ -19,35 +30,22 @@ kotlin {
             isStatic = true
         }
     }
-    
-    js {
-        browser()
-    }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser()
+        outputModuleName = "devdeck"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "devdeck.js"
+            }
+        }
+        binaries.executable()
     }
     
-    android {
-       namespace = "com.example.devdeck.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
-       withDeviceTestBuilder {
-           sourceSetTreeName = "test"
-       }.configure {
-           instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-       }
+    androidTarget {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
     
     sourceSets {
@@ -60,7 +58,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
-            implementation(libs.compose.components.resources)
+            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
@@ -68,23 +66,21 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
-
-            // Navigation Compose
-            implementation(libs.navigation.compose)
-
-            // Serialization & Datetime
-            implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kotlinx.datetime)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
-        jsMain.dependencies {
-            implementation(libs.wrappers.browser)
-        }
     }
 }
 
-dependencies {
-    androidRuntimeClasspath(libs.compose.uiTooling)
+android {
+    namespace = "com.example.devdeck.shared"
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    defaultConfig {
+        minSdk = libs.versions.android.minSdk.get().toInt()
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 }
