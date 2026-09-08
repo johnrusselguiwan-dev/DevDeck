@@ -1,20 +1,17 @@
 package com.example.devdeck.domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class DeveloperProfile(
     val name: String = "Joro Developer",
     val title: String = "Strong Junior / Junior+ Android & KMP Engineer",
-    val bio: String = "Mobile & Cross-Platform Engineer with 6 months of intense startup execution. Proven track record of delivering production apps to the Google Play Store, building KMP shared modules, and architecting scalable Android solutions.",
+    val bio: String = "Mobile & Cross-Platform Engineer with 6 months of startup execution. Delivered production apps to the Google Play Store, engineered KMP shared modules, and established automated CI/CD release pipelines.",
     val location: String = "Remote / Worldwide",
-    val yearsExperience: String = "6+ Months Startup Execution",
+    val yearsExperience: String = "6 Months Startup Execution",
     val playStoreAppsCount: Int = 2,
     val coreFocus: List<String> = listOf(
-        "Android SDK & Jetpack Compose",
+        "Native Android & Jetpack Compose",
         "Kotlin Multiplatform (KMP/CMP)",
-        "Clean Architecture & MVVM",
-        "Play Console Release Pipelines"
+        "Clean Architecture + MVVM",
+        "Google Play Console Pipelines"
     )
 )
 
@@ -25,7 +22,6 @@ enum class SkillCategory(val displayName: String) {
     DEVOPS("Lifecycle & DevOps")
 }
 
-@Serializable
 data class Skill(
     val id: String,
     val name: String,
@@ -34,7 +30,6 @@ data class Skill(
     val description: String
 )
 
-@Serializable
 data class Experience(
     val id: String,
     val role: String,
@@ -46,7 +41,6 @@ data class Experience(
     val techStack: List<String>
 )
 
-@Serializable
 data class Project(
     val id: String,
     val title: String,
@@ -58,7 +52,6 @@ data class Project(
     val isFeatured: Boolean = true
 )
 
-@Serializable
 data class SocialLink(
     val id: String,
     val platform: String,
