@@ -26,7 +26,7 @@ data class Skill(
     val id: String,
     val name: String,
     val category: SkillCategory,
-    val level: Int, // 1 to 100
+    val level: Int, 
     val description: String
 )
 

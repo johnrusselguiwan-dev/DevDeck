@@ -48,7 +48,7 @@ fun HeroHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                // Circular Profile Avatar with subtle iOS white border
+                
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -75,7 +75,7 @@ fun HeroHeader(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Title pill container
+                    
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
@@ -95,7 +95,7 @@ fun HeroHeader(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // iOS-Style High Impact Tagline
+            
             Text(
                 text = "6 months startup experience building multi-module Android & KMP apps deployed to production.",
                 style = MaterialTheme.typography.titleMedium,
@@ -115,7 +115,7 @@ fun HeroHeader(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Primary Action Buttons (CTAs)
+            
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)

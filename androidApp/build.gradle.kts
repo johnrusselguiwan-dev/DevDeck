@@ -1,5 +1,8 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
 }
 
@@ -13,6 +16,14 @@ dependencies {
 android {
     namespace = "com.example.devdeck"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    lint {
+        abortOnError = true
+        checkDependencies = true
+        ignoreTestSources = true
+        error += listOf("HardcodedText", "ResourceAsColor")
+        disable += listOf("QueryAllPackagesPermission")
+    }
 
     defaultConfig {
         applicationId = "com.example.devdeck"
@@ -41,5 +52,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }

@@ -124,7 +124,7 @@ fun HomeScreen(
                             val isWideScreen = maxWidth > 840.dp
 
                             if (isWideScreen) {
-                                // Wide Screen (Desktop/Web) Dual Column Layout
+                                
                                 Row(
                                     modifier = Modifier
                                         .fillMaxSize()
@@ -132,7 +132,7 @@ fun HomeScreen(
                                         .padding(24.dp),
                                     horizontalArrangement = Arrangement.spacedBy(24.dp)
                                 ) {
-                                    // Left Column: Hero & Highlights Banner & Contact
+                                    
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {
@@ -154,7 +154,7 @@ fun HomeScreen(
                                         )
                                     }
 
-                                    // Right Column: Projects, Skills Matrix, Experience Timeline
+                                    
                                     Column(
                                         modifier = Modifier.weight(1.2f)
                                     ) {
@@ -177,14 +177,14 @@ fun HomeScreen(
                                     }
                                 }
                             } else {
-                                // Mobile / Tablet Single Column Sequential Layout
+                                
                                 Column(
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .verticalScroll(rememberScrollState())
                                         .padding(horizontal = 16.dp, vertical = 16.dp)
                                 ) {
-                                    // 1. Hero Section (First Fold)
+                                    
                                     HeroHeader(
                                         profile = state.profile,
                                         socialLinks = state.socialLinks,
@@ -193,12 +193,12 @@ fun HomeScreen(
 
                                     Spacer(modifier = Modifier.height(20.dp))
 
-                                    // 2. Key Highlights Banner (Quick Scanning Strip)
+                                    
                                     KeyHighlightsBanner()
 
                                     Spacer(modifier = Modifier.height(24.dp))
 
-                                    // 3. Featured Projects Showcase (Proof of Work)
+                                    
                                     ProjectsShowcase(
                                         projects = state.projects,
                                         onOpenUrl = onOpenUrl
@@ -206,7 +206,7 @@ fun HomeScreen(
 
                                     Spacer(modifier = Modifier.height(24.dp))
 
-                                    // 4. Categorized Technical Skills Matrix
+                                    
                                     SkillsSection(
                                         skills = state.skills,
                                         selectedCategory = state.selectedSkillCategory,
@@ -215,12 +215,12 @@ fun HomeScreen(
 
                                     Spacer(modifier = Modifier.height(24.dp))
 
-                                    // 5. Experience Timeline
+                                    
                                     ExperienceTimeline(experiences = state.experiences)
 
                                     Spacer(modifier = Modifier.height(24.dp))
 
-                                    // 6. Footer Contact CTA
+                                    
                                     ContactSection(
                                         socialLinks = state.socialLinks,
                                         onOpenUrl = onOpenUrl
