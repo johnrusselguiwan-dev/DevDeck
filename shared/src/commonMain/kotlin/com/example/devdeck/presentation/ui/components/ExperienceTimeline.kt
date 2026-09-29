@@ -59,12 +59,12 @@ private fun ExperienceTimelineItem(
     Row(
         modifier = modifier.fillMaxWidth()
     ) {
-        // Timeline Indicator Column
+        
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(end = 16.dp)
         ) {
-            // iOS Monochromatic Dot
+            
             Box(
                 modifier = Modifier
                     .size(16.dp)
@@ -74,7 +74,7 @@ private fun ExperienceTimelineItem(
             )
 
             if (!isLast) {
-                // Vertical Timeline Line
+                
                 Box(
                     modifier = Modifier
                         .width(1.5.dp)
@@ -84,7 +84,7 @@ private fun ExperienceTimelineItem(
             }
         }
 
-        // Card Content Column using IOSMonochromeCard
+        
         IOSMonochromeCard(
             modifier = Modifier
                 .weight(1f)
@@ -126,7 +126,7 @@ private fun ExperienceTimelineItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Highlights Bullet Points
+            
             experience.highlights.forEach { highlight ->
                 Row(
                     modifier = Modifier.padding(vertical = 3.dp),
@@ -148,7 +148,7 @@ private fun ExperienceTimelineItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Tech Stack Badges
+            
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
