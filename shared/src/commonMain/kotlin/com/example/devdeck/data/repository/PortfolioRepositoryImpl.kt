@@ -15,17 +15,19 @@ class PortfolioRepositoryImpl : PortfolioRepository {
     override fun getProfile(): Flow<DeveloperProfile> {
         return flowOf(
             DeveloperProfile(
-                name = "Joro Developer",
-                title = "Strong Junior / Junior+ Android & KMP Engineer",
-                bio = "Mobile & Cross-Platform Engineer with 6 months of startup execution. Delivered production apps to the Google Play Store, engineered KMP shared modules, and established automated CI/CD release pipelines.",
-                location = "Remote / Worldwide",
-                yearsExperience = "6 Months Startup Execution",
-                playStoreAppsCount = 2,
+                name = "John Russel Guiwan",
+                title = "Android & Jetpack Compose Engineer",
+                bio = "Android Developer skilled in Java, Native Kotlin, Jetpack Compose, and Multi-Module Architecture. Currently practicing Kotlin Multiplatform (KMP/CMP) to explore cross-platform development — developing this DevDeck app as a hands-on learning project to test KMP/CMP capabilities.",
+                location = "Philippines",
+                yearsExperience = "Android & Multi-Module Developer",
+                playStoreAppsCount = 1,
                 coreFocus = listOf(
-                    "Native Android & Jetpack Compose",
-                    "Kotlin Multiplatform (KMP/CMP)",
-                    "Clean Architecture + MVVM",
-                    "Google Play Console Pipelines"
+                    "Java & Native Android SDK",
+                    "Idiomatic Kotlin & Coroutines",
+                    "Jetpack Compose UI",
+                    "Multi-Module Clean Architecture",
+                    "REST APIs & Web Ingestion",
+                    "KMP / CMP (Practice & Exploring)"
                 )
             )
         )
@@ -34,96 +36,75 @@ class PortfolioRepositoryImpl : PortfolioRepository {
     override fun getSkills(): Flow<List<Skill>> {
         return flowOf(
             listOf(
-                // Architecture & System Design
+                // Core Mobile & Native SDK
                 Skill(
                     id = "s1",
-                    name = "Multi-Module Architecture",
-                    category = SkillCategory.ARCHITECTURE,
-                    level = 88,
-                    description = "Structuring projects into decoupled feature and library modules for scalability."
+                    name = "Java & Android SDK",
+                    category = SkillCategory.MOBILE_NETWORK,
+                    level = 92,
+                    description = "Core Java OOP principles, Android lifecycle, Services, BroadcastReceivers, and native Android development."
                 ),
                 Skill(
                     id = "s2",
-                    name = "Clean Architecture & MVVM",
-                    category = SkillCategory.ARCHITECTURE,
-                    level = 92,
-                    description = "Strict separation of concerns into Presentation, Domain, and Data layers."
-                ),
-                Skill(
-                    id = "s3",
-                    name = "Code Reusability & DI",
-                    category = SkillCategory.ARCHITECTURE,
-                    level = 90,
-                    description = "Leveraging Koin dependency injection and design patterns for maximum code reusability."
+                    name = "Idiomatic Kotlin & Coroutines",
+                    category = SkillCategory.MOBILE_NETWORK,
+                    level = 94,
+                    description = "Kotlin coroutines, StateFlow/SharedFlow, extension functions, sealed interfaces, and modern idiomatic code."
                 ),
 
-                // Core Mobile & Network
+                // UI & Cross-Platform
                 Skill(
-                    id = "s4",
-                    name = "Native Android SDK & Idiomatic Kotlin",
-                    category = SkillCategory.MOBILE_NETWORK,
-                    level = 92,
-                    description = "Deep knowledge of Android lifecycle, Coroutines, StateFlow, and modern Kotlin idioms."
+                    id = "s3",
+                    name = "Jetpack Compose",
+                    category = SkillCategory.CROSS_PLATFORM,
+                    level = 95,
+                    description = "Declarative UI creation, state management, custom modifiers, Material 3 design, and performance optimizations."
                 ),
                 Skill(
+                    id = "s4",
+                    name = "Kotlin Multiplatform (KMP / CMP)",
+                    category = SkillCategory.CROSS_PLATFORM,
+                    level = 68,
+                    description = "Practicing and exploring cross-platform development. Built this DevDeck app as a hands-on learning project to test shared Kotlin logic and Compose UI across platforms."
+                ),
+
+                // Architecture & Engineering
+                Skill(
                     id = "s5",
-                    name = "Retrofit / Ktor API Integration",
-                    category = SkillCategory.MOBILE_NETWORK,
-                    level = 89,
-                    description = "RESTful networking, auth interceptors, payload serialization, and robust error handling."
+                    name = "Multi-Module Architecture",
+                    category = SkillCategory.ARCHITECTURE,
+                    level = 90,
+                    description = "Structuring projects into decoupled feature modules and core infrastructure libraries for scalability and build speed."
                 ),
                 Skill(
                     id = "s6",
-                    name = "Web Scraping & Data Ingestion",
-                    category = SkillCategory.MOBILE_NETWORK,
-                    level = 85,
-                    description = "Automated data parsing, HTML scraping, and structured backend/local synchronization."
+                    name = "Clean Architecture & MVVM",
+                    category = SkillCategory.ARCHITECTURE,
+                    level = 92,
+                    description = "Strict separation of concerns into Presentation, Domain, and Data layers with unidirectional data flow."
                 ),
-
-                // Cross-Platform & Modern Stack
                 Skill(
                     id = "s7",
-                    name = "Kotlin Multiplatform (KMP)",
-                    category = SkillCategory.CROSS_PLATFORM,
+                    name = "Dependency Injection (Koin / Hilt)",
+                    category = SkillCategory.ARCHITECTURE,
                     level = 88,
-                    description = "Sharing business logic, repositories, and ViewModels across Android, iOS, and Web."
+                    description = "Injecting ViewModels, repositories, and network services using Koin and Hilt."
                 ),
+
+                // Networking & Ingestion
                 Skill(
                     id = "s8",
-                    name = "Compose Multiplatform (CMP)",
-                    category = SkillCategory.CROSS_PLATFORM,
-                    level = 90,
-                    description = "Building single-codebase UI with Material 3, custom animations, and responsive web layouts."
+                    name = "Retrofit / Ktor API Integration",
+                    category = SkillCategory.MOBILE_NETWORK,
+                    level = 89,
+                    description = "RESTful networking, JSON serialization, auth interceptors, and robust error handling."
                 ),
                 Skill(
                     id = "s9",
-                    name = "Jetpack Compose",
-                    category = SkillCategory.CROSS_PLATFORM,
-                    level = 94,
-                    description = "Declarative UI creation, custom layout modifiers, performance optimization, and custom themes."
-                ),
-
-                // Lifecycle & DevOps
-                Skill(
-                    id = "s10",
-                    name = "Google Play Console Release Management",
-                    category = SkillCategory.DEVOPS,
-                    level = 87,
-                    description = "Managing Internal, Closed Testing, and Production release tracks, app sign keys, and store listings."
-                ),
-                Skill(
-                    id = "s11",
-                    name = "Firebase App Distribution",
-                    category = SkillCategory.DEVOPS,
-                    level = 88,
-                    description = "Beta build delivery, tester group management, and automated build artifact distribution."
-                ),
-                Skill(
-                    id = "s12",
-                    name = "Agile SDLC & Release Pipelines",
-                    category = SkillCategory.DEVOPS,
-                    level = 86,
-                    description = "Iterative sprint execution, continuous integration, versioning strategy, and rapid deployment."
+                    name = "Web Scraping & Data Ingestion",
+                    category = SkillCategory.MOBILE_NETWORK,
+                    level = 85,
+                    description = "Automated web scraping, HTML parsing with Jsoup, and local offline-first persistence."
                 )
             )
         )
@@ -134,30 +115,17 @@ class PortfolioRepositoryImpl : PortfolioRepository {
             listOf(
                 Experience(
                     id = "exp1",
-                    role = "Core Mobile Contributor",
-                    company = "Startup Mobile Team",
-                    period = "Recent 6 Months (Production Delivery)",
+                    role = "Android & Multi-Module Developer",
+                    company = "Android Development",
+                    period = "Present",
                     isCurrent = true,
-                    summary = "Spearheaded core mobile feature development and architecture migration for production applications targeting Android, iOS, and Web platforms.",
+                    summary = "Developing production-ready native Android applications utilizing Java, Kotlin, Jetpack Compose, and multi-module architecture.",
                     highlights = listOf(
-                        "Designed and implemented multi-module KMP shared layers isolating business logic and networking.",
-                        "Configured and maintained Google Play Console release tracks (Internal, Testing, Production).",
-                        "Automated test build deployments using Firebase App Distribution to accelerate stakeholder feedback loops."
+                        "Engineered modular Android architectures isolating UI components, data repositories, and feature modules.",
+                        "Integrated REST APIs, Coroutines, StateFlow, and Jetpack Compose for modern, reactive user experiences.",
+                        "Practicing Kotlin Multiplatform (KMP) to expand cross-platform knowledge and build cross-platform showcase apps."
                     ),
-                    techStack = listOf("KMP", "Compose Multiplatform", "Koin", "Ktor", "Google Play Console", "Firebase")
-                ),
-                Experience(
-                    id = "exp2",
-                    role = "Junior Android & KMP Engineer",
-                    company = "Freelance & Open Source Projects",
-                    period = "2025 - Present",
-                    isCurrent = false,
-                    summary = "Built cross-platform utility applications, open-source libraries, and interactive showcase platforms.",
-                    highlights = listOf(
-                        "Published full-stack KMP applications with declarative Compose UI.",
-                        "Integrated REST APIs with Ktor and serialization for seamless multiplatform data flow."
-                    ),
-                    techStack = listOf("Jetpack Compose", "Clean Architecture", "Retrofit", "Coroutines", "StateFlow")
+                    techStack = listOf("Java", "Kotlin", "Jetpack Compose", "Multi-Module", "Koin", "Retrofit", "KMP Practice")
                 )
             )
         )
@@ -168,32 +136,22 @@ class PortfolioRepositoryImpl : PortfolioRepository {
             listOf(
                 Project(
                     id = "proj1",
-                    title = "RewardsApp",
-                    subtitle = "Checkin & Loyalty Multiplatform App",
-                    description = "A production-grade Kotlin Multiplatform app featuring location-based checkins, user authentication, event registration, QR code scanning, and rewards tracking across mobile and web.",
-                    techBadges = listOf("KMP", "Compose Multiplatform", "Koin", "Ktor", "Clean Architecture", "Material 3"),
-                    playStoreUrl = "https://play.google.com/store/apps/details?id=com.heroapps.checkinapp",
-                    githubUrl = "https://github.com/heroapps/checkin-app",
+                    title = "DevDeck",
+                    subtitle = "Interactive KMP Practice Portfolio App",
+                    description = "Developer portfolio application created as hands-on practice to explore Kotlin Multiplatform and Compose Multiplatform across Android and platforms. Built with Clean Architecture, MVVM, and Material 3 design.",
+                    techBadges = listOf("Jetpack Compose", "KMP Practice", "Compose Multiplatform", "Clean Architecture", "Material 3"),
+                    playStoreUrl = null,
+                    githubUrl = "https://github.com/johnrusselguiwan-dev",
                     isFeatured = true
                 ),
                 Project(
                     id = "proj2",
-                    title = "DevDeck",
-                    subtitle = "Interactive KMP Portfolio Application",
-                    description = "Cross-platform developer showcase application targeting Android, iOS, and Web (Wasm/JS). Built with Clean Architecture, MVVM, and Material 3 design system.",
-                    techBadges = listOf("KMP", "Compose Multiplatform", "Jetpack Compose", "StateFlow", "Clean Architecture"),
+                    title = "Multi-Module Android App",
+                    subtitle = "Scalable Android Architecture",
+                    description = "Production-grade Android application structured into clean, decoupled feature modules using Jetpack Compose, MVVM, and Retrofit.",
+                    techBadges = listOf("Java", "Kotlin", "Jetpack Compose", "Multi-Module", "MVVM"),
                     playStoreUrl = null,
-                    githubUrl = "https://github.com/developer/DevDeck",
-                    isFeatured = true
-                ),
-                Project(
-                    id = "proj3",
-                    title = "DataIngest & Scraper",
-                    subtitle = "Automated Mobile Content Pipeline",
-                    description = "Android SDK application integrating web scraping, automated ingestion, background data sync, and clean presentation using Retrofit and Kotlin Coroutines.",
-                    techBadges = listOf("Jetpack Compose", "Retrofit", "Jsoup", "Coroutines", "Clean Architecture"),
-                    playStoreUrl = "https://play.google.com/store/apps/developer?id=DevDeck",
-                    githubUrl = "https://github.com/developer/data-ingest-android",
+                    githubUrl = "https://github.com/johnrusselguiwan-dev",
                     isFeatured = true
                 )
             )
@@ -205,27 +163,21 @@ class PortfolioRepositoryImpl : PortfolioRepository {
             listOf(
                 SocialLink(
                     id = "soc1",
-                    platform = "LinkedIn",
-                    url = "https://linkedin.com/in/devdeck-engineer",
-                    iconIdentifier = "linkedin"
+                    platform = "GitHub",
+                    url = "https://github.com/johnrusselguiwan-dev",
+                    iconIdentifier = "github"
                 ),
                 SocialLink(
                     id = "soc2",
-                    platform = "GitHub",
-                    url = "https://github.com/developer",
-                    iconIdentifier = "github"
+                    platform = "Facebook",
+                    url = "https://www.facebook.com/russel.guiwan/",
+                    iconIdentifier = "facebook"
                 ),
                 SocialLink(
                     id = "soc3",
                     platform = "Email",
-                    url = "mailto:devdeck.engineer@example.com",
+                    url = "mailto:russelguiwan@gmail.com",
                     iconIdentifier = "email"
-                ),
-                SocialLink(
-                    id = "soc4",
-                    platform = "Google Play Developer Profile",
-                    url = "https://play.google.com/store/apps/developer?id=DevDeck",
-                    iconIdentifier = "playstore"
                 )
             )
         )
