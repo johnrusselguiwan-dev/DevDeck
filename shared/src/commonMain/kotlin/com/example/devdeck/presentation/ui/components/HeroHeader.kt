@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.devdeck.domain.model.DeveloperProfile
 import com.example.devdeck.domain.model.SocialLink
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HeroHeader(
     profile: DeveloperProfile,
@@ -52,7 +55,6 @@ fun HeroHeader(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Circular Profile Avatar
                 Box(
                     modifier = Modifier
                         .size(72.dp)
@@ -81,7 +83,7 @@ fun HeroHeader(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Title pill container
+                    
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
@@ -102,6 +104,16 @@ fun HeroHeader(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
+                text = "6 months startup experience building multi-module Android & KMP apps deployed to production.",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                lineHeight = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
                 text = profile.bio,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -110,10 +122,9 @@ fun HeroHeader(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Primary Action Buttons (CTAs)
-            FlowRowLayout(
-                horizontalSpacing = 10.dp,
-                verticalSpacing = 10.dp
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 socialLinks.forEach { link ->
                     IOSCtaButton(

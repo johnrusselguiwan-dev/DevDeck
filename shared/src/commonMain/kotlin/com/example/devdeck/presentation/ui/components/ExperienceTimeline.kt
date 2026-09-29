@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.devdeck.domain.model.Experience
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExperienceTimeline(
     experiences: List<Experience>,
@@ -48,6 +51,7 @@ fun ExperienceTimeline(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExperienceTimelineItem(
     experience: Experience,
@@ -59,12 +63,12 @@ private fun ExperienceTimelineItem(
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
     ) {
-        // Timeline Indicator Column
+        
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(end = 16.dp)
         ) {
-            // iOS Monochromatic Dot
+            
             Box(
                 modifier = Modifier
                     .size(16.dp)
@@ -74,7 +78,6 @@ private fun ExperienceTimelineItem(
             )
 
             if (!isLast) {
-                // Dynamic Vertical Timeline Line matching card height
                 Box(
                     modifier = Modifier
                         .width(2.dp)
@@ -84,7 +87,7 @@ private fun ExperienceTimelineItem(
             }
         }
 
-        // Card Content Column using IOSMonochromeCard
+        
         IOSMonochromeCard(
             modifier = Modifier
                 .weight(1f)
@@ -129,7 +132,7 @@ private fun ExperienceTimelineItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Highlights Bullet Points
+            
             experience.highlights.forEach { highlight ->
                 Row(
                     modifier = Modifier.padding(vertical = 3.dp),
@@ -151,10 +154,9 @@ private fun ExperienceTimelineItem(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Tech Stack Badges
-            FlowRowLayout(
-                horizontalSpacing = 6.dp,
-                verticalSpacing = 6.dp
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 experience.techStack.forEach { tech ->
                     TechBadge(text = tech)

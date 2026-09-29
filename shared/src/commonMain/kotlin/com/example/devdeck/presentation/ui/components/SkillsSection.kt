@@ -48,7 +48,7 @@ fun SkillsSection(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        // iOS Segmented Control Pill Bar
+        
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +79,7 @@ fun SkillsSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Skills Grid Cards
+        
         Column(
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {

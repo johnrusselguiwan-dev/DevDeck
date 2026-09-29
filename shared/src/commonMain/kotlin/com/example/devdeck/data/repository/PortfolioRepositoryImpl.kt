@@ -36,7 +36,6 @@ class PortfolioRepositoryImpl : PortfolioRepository {
     override fun getSkills(): Flow<List<Skill>> {
         return flowOf(
             listOf(
-                // Core Mobile & Native SDK
                 Skill(
                     id = "s1",
                     name = "Java & Android SDK",
@@ -51,8 +50,6 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     level = 94,
                     description = "Kotlin coroutines, StateFlow/SharedFlow, extension functions, sealed interfaces, and modern idiomatic code."
                 ),
-
-                // UI & Cross-Platform
                 Skill(
                     id = "s3",
                     name = "Jetpack Compose",
@@ -67,8 +64,6 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     level = 68,
                     description = "Practicing and exploring cross-platform development. Built this DevDeck app as a hands-on learning project to test shared Kotlin logic and Compose UI across platforms."
                 ),
-
-                // Architecture & Engineering
                 Skill(
                     id = "s5",
                     name = "Multi-Module Architecture",
@@ -90,8 +85,6 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     level = 88,
                     description = "Injecting ViewModels, repositories, and network services using Koin and Hilt."
                 ),
-
-                // Networking & Ingestion
                 Skill(
                     id = "s8",
                     name = "Retrofit / Ktor API Integration",
@@ -105,6 +98,27 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     category = SkillCategory.MOBILE_NETWORK,
                     level = 85,
                     description = "Automated web scraping, HTML parsing with Jsoup, and local offline-first persistence."
+                ),
+                Skill(
+                    id = "s10",
+                    name = "Google Play Console Release Management",
+                    category = SkillCategory.DEVOPS,
+                    level = 87,
+                    description = "Managing Internal, Closed Testing, and Production release tracks, app sign keys, and store listings."
+                ),
+                Skill(
+                    id = "s11",
+                    name = "Firebase App Distribution",
+                    category = SkillCategory.DEVOPS,
+                    level = 88,
+                    description = "Beta build delivery, tester group management, and automated build artifact distribution."
+                ),
+                Skill(
+                    id = "s12",
+                    name = "Agile SDLC & Release Pipelines",
+                    category = SkillCategory.DEVOPS,
+                    level = 86,
+                    description = "Iterative sprint execution, continuous integration, versioning strategy, and rapid deployment."
                 )
             )
         )
