@@ -8,7 +8,6 @@ import kotlinx.browser.window
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     try {
-        // Remove the spinner once WASM is loaded
         document.getElementById("spinner")?.let { it.parentNode?.removeChild(it) }
 
         val body = document.body ?: return

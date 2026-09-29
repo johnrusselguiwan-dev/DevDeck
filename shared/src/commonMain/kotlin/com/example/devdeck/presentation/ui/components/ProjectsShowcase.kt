@@ -99,7 +99,7 @@ private fun ProjectCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Tech Badges FlowRow
+        
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -111,7 +111,7 @@ private fun ProjectCard(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Action Buttons (Play Store & GitHub)
+        
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
