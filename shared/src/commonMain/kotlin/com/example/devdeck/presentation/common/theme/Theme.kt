@@ -6,6 +6,12 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
+enum class ThemeMode(val displayName: String) {
+    SYSTEM("System Preference"),
+    LIGHT("Light Mode"),
+    DARK("Dark Mode")
+}
+
 private val DarkColorScheme = darkColorScheme(
     primary = IOSTextPrimaryDark,
     onPrimary = IOSBackgroundDark,
@@ -40,9 +46,14 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun DevDeckTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {
+    val darkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK -> true
+    }
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     MaterialTheme(
