@@ -34,7 +34,7 @@ class PortfolioRepositoryImpl : PortfolioRepository {
     override fun getSkills(): Flow<List<Skill>> {
         return flowOf(
             listOf(
-                // Architecture & System Design
+                
                 Skill(
                     id = "s1",
                     name = "Multi-Module Architecture",
@@ -57,7 +57,7 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     description = "Leveraging Koin dependency injection and design patterns for maximum code reusability."
                 ),
 
-                // Core Mobile & Network
+                
                 Skill(
                     id = "s4",
                     name = "Native Android SDK & Idiomatic Kotlin",
@@ -80,7 +80,7 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     description = "Automated data parsing, HTML scraping, and structured backend/local synchronization."
                 ),
 
-                // Cross-Platform & Modern Stack
+                
                 Skill(
                     id = "s7",
                     name = "Kotlin Multiplatform (KMP)",
@@ -103,7 +103,7 @@ class PortfolioRepositoryImpl : PortfolioRepository {
                     description = "Declarative UI creation, custom layout modifiers, performance optimization, and custom themes."
                 ),
 
-                // Lifecycle & DevOps
+                
                 Skill(
                     id = "s10",
                     name = "Google Play Console Release Management",

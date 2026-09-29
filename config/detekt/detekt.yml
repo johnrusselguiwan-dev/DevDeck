@@ -1,0 +1,173 @@
+config:
+  validation: true
+  warningsAsErrors: false
+  checkExhaustiveness: false
+
+comments:
+  active: true
+  CommentOverPrivateFunction:
+    active: true
+  CommentOverPrivateProperty:
+    active: true
+  EndOfSentenceFormat:
+    active: false
+
+complexity:
+  active: true
+  CognitiveComplexMethod:
+    active: false
+  ComplexCondition:
+    active: true
+    threshold: 5
+  ComplexInterface:
+    active: false
+  CyclomaticComplexMethod:
+    active: true
+    threshold: 23
+    ignoreSingleWhenExpression: true
+    ignoreSimpleWhenEntries: true
+    ignoreNestingFunctions: false
+    nestingFunctions:
+      - 'also'
+      - 'apply'
+      - 'forEach'
+      - 'isNotNull'
+      - 'ifNull'
+      - 'let'
+      - 'run'
+      - 'use'
+      - 'with'
+  LabeledExpression:
+    active: false
+  LargeClass:
+    active: true
+    threshold: 600
+  LongMethod:
+    active: true
+    threshold: 200
+    ignoreAnnotated:
+      - "Composable"
+  LongParameterList:
+    active: true
+    ignoreDefaultParameters: true
+    ignoreDataClasses: true
+    ignoreAnnotatedParameter: [ 'Value', 'Composable' ]
+    functionThreshold: 15
+    constructorThreshold: 15
+  MethodOverloading:
+    active: false
+  NamedArguments:
+    active: false
+  NestedBlockDepth:
+    active: true
+    threshold: 6
+  NestedScopeFunctions:
+    active: false
+  ReplaceSafeCallChainWithRun:
+    active: false
+  StringLiteralDuplication:
+    active: false
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 30
+    thresholdInClasses: 30
+    thresholdInInterfaces: 30
+    thresholdInObjects: 15
+    thresholdInEnums: 11
+    excludes: [ '**/test/**', '**/androidTest/**', '**/iosTest/**', '**/commonTest/**', '**/wasmJsTest/**' ]
+    ignoreDeprecated: false
+    ignorePrivate: false
+    ignoreOverridden: true
+
+naming:
+  PackageNaming:
+    active: true
+  ConstructorParameterNaming:
+    active: true
+  FunctionNaming:
+    active: true
+    ignoreAnnotated: ['Composable']
+  TopLevelPropertyNaming:
+    active: true
+    constantPattern: '[A-Za-z][A-Za-z0-9]*'
+
+style:
+  MagicNumber:
+    active: false
+  WildcardImport:
+    active: true
+    excludeImports:
+      - 'org.junit.Assert.*'
+      - 'kotlin.test.*'
+  UnusedImports:
+    active: true
+  NewLineAtEndOfFile:
+    active: false
+  ReturnCount:
+    active: true
+    max: 3
+    excludeGuardClauses: true
+  UseCheckOrError:
+    active: true
+  UseRequire:
+    active: true
+  ForbiddenComment:
+    active: true
+    comments:
+      - 'FIXME:'
+      - 'HACK:'
+    excludes: [ '**/test/**', '**/androidTest/**', '**/iosTest/**', '**/commonTest/**', '**/wasmJsTest/**' ]
+
+potential-bugs:
+  active: true
+  UnreachableCode:
+    active: true
+  UnsafeCallOnNullableType:
+    active: true
+    excludes: [ '**/test/**', '**/androidTest/**', '**/iosTest/**', '**/commonTest/**', '**/wasmJsTest/**' ]
+  UnsafeCast:
+    active: true
+
+empty-blocks:
+  active: true
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: false
+
+formatting:
+  active: true
+  android: true
+  CommentSpacing:
+    active: true
+  NoWildcardImports:
+    active: true
+  NoUnusedImports:
+    active: true
+  NoConsecutiveBlankLines:
+    active: true
+  NoTrailingSpaces:
+    active: true
+  NoMultipleSpaces:
+    active: true
+  SpacingAroundColon:
+    active: true
+  SpacingAroundComma:
+    active: true
+  SpacingAroundKeyword:
+    active: true
+  SpacingAroundOperators:
+    active: true
+  SpacingAroundCurly:
+    active: true
+  SpacingAroundParens:
+    active: true
+  TrailingCommaOnCallSite:
+    active: true
+    useTrailingCommaOnCallSite: false
+  TrailingCommaOnDeclarationSite:
+    active: true
+    useTrailingCommaOnDeclarationSite: false
