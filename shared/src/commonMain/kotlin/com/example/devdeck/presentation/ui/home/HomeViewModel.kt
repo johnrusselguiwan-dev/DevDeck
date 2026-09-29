@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.devdeck.domain.model.SkillCategory
 import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
+import com.example.devdeck.presentation.common.theme.ThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,10 +51,20 @@ class HomeViewModel(
         }
     }
 
-    fun toggleDarkMode() {
+    fun selectTab(tab: NavigationTab) {
         _uiState.update { currentState ->
             if (currentState is HomeUiState.Success) {
-                currentState.copy(isDarkMode = !currentState.isDarkMode)
+                currentState.copy(selectedTab = tab)
+            } else {
+                currentState
+            }
+        }
+    }
+
+    fun setThemeMode(mode: ThemeMode) {
+        _uiState.update { currentState ->
+            if (currentState is HomeUiState.Success) {
+                currentState.copy(themeMode = mode)
             } else {
                 currentState
             }
