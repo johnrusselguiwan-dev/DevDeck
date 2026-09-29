@@ -2,8 +2,6 @@ package com.example.devdeck.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -51,7 +49,6 @@ fun ProjectsShowcase(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ProjectCard(
     project: Project,
@@ -64,9 +61,13 @@ private fun ProjectCard(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp)
+            ) {
                 Text(
                     text = project.title,
                     style = MaterialTheme.typography.titleLarge,
@@ -99,10 +100,10 @@ private fun ProjectCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Tech Badges FlowRow
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+        // Tech Badges FlowRowLayout
+        FlowRowLayout(
+            horizontalSpacing = 8.dp,
+            verticalSpacing = 8.dp
         ) {
             project.techBadges.forEach { badge ->
                 TechBadge(text = badge)

@@ -2,10 +2,7 @@ package com.example.devdeck.presentation.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,25 +14,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun KeyHighlightsBanner(
     modifier: Modifier = Modifier
 ) {
     val highlights = listOf(
-        "📱 1+ Live Play Store Apps",
-        "🏗️ Multi-Module & Clean Architecture",
-        "🚀 KMP / CMP Cross-Platform",
-        "⚡ 6 Months Startup Experience"
+        "☕ Java & Native Kotlin",
+        "🎨 Jetpack Compose UI",
+        "🏗️ Multi-Module Architecture",
+        "🧪 KMP / CMP Hands-on Practice"
     )
 
     IOSMonochromeCard(
         modifier = modifier.fillMaxWidth()
     ) {
-        FlowRow(
+        FlowRowLayout(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalSpacing = 10.dp,
+            verticalSpacing = 10.dp
         ) {
             highlights.forEach { text ->
                 HighlightChip(text = text)
