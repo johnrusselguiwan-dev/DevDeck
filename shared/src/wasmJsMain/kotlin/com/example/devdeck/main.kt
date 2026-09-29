@@ -7,15 +7,20 @@ import kotlinx.browser.window
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-    // Remove the spinner once WASM is loaded
-    document.getElementById("spinner")?.let { it.parentNode?.removeChild(it) }
+    try {
+        // Remove the spinner once WASM is loaded
+        document.getElementById("spinner")?.let { it.parentNode?.removeChild(it) }
 
-    val body = document.body ?: return
-    ComposeViewport(body) {
-        App(
-            onOpenUrl = { url ->
-                window.open(url, "_blank")
-            }
-        )
+        val body = document.body ?: return
+        ComposeViewport(body) {
+            App(
+                onOpenUrl = { url ->
+                    window.open(url, "_blank")
+                }
+            )
+        }
+    } catch (e: Throwable) {
+        println("WASM Exception during main: ${e.message}")
+        e.printStackTrace()
     }
 }
