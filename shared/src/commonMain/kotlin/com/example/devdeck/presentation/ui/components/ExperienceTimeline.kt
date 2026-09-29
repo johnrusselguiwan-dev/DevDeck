@@ -5,8 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,7 +48,6 @@ fun ExperienceTimeline(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExperienceTimelineItem(
     experience: Experience,
@@ -57,7 +55,9 @@ private fun ExperienceTimelineItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min)
     ) {
         // Timeline Indicator Column
         Column(
@@ -74,11 +74,11 @@ private fun ExperienceTimelineItem(
             )
 
             if (!isLast) {
-                // Vertical Timeline Line
+                // Dynamic Vertical Timeline Line matching card height
                 Box(
                     modifier = Modifier
-                        .width(1.5.dp)
-                        .height(160.dp)
+                        .width(2.dp)
+                        .weight(1f)
                         .background(MaterialTheme.colorScheme.outline)
                 )
             }
@@ -93,13 +93,16 @@ private fun ExperienceTimelineItem(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = experience.role,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 )
 
                 if (experience.isCurrent) {
@@ -149,9 +152,9 @@ private fun ExperienceTimelineItem(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Tech Stack Badges
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+            FlowRowLayout(
+                horizontalSpacing = 6.dp,
+                verticalSpacing = 6.dp
             ) {
                 experience.techStack.forEach { tech ->
                     TechBadge(text = tech)

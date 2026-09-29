@@ -5,8 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import com.example.devdeck.domain.model.DeveloperProfile
 import com.example.devdeck.domain.model.SocialLink
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HeroHeader(
     profile: DeveloperProfile,
@@ -38,6 +35,12 @@ fun HeroHeader(
     onOpenUrl: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val initials = profile.name.split(" ")
+        .mapNotNull { it.firstOrNull() }
+        .take(2)
+        .joinToString("")
+        .uppercase()
+
     IOSMonochromeCard(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -46,29 +49,32 @@ fun HeroHeader(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // Circular Profile Avatar with subtle iOS white border
+                // Circular Profile Avatar
                 Box(
                     modifier = Modifier
-                        .size(80.dp)
+                        .size(72.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.primaryContainer)
                         .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "JD",
+                        text = initials.ifEmpty { "JG" },
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
 
-                Column {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text(
                         text = profile.name,
-                        style = MaterialTheme.typography.displayLarge.copy(fontSize = 30.sp),
+                        style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -84,8 +90,8 @@ fun HeroHeader(
                             .padding(horizontal = 10.dp, vertical = 6.dp)
                     ) {
                         Text(
-                            text = "Android & Kotlin Multiplatform Engineer",
-                            style = MaterialTheme.typography.titleMedium,
+                            text = profile.title,
+                            style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -94,17 +100,6 @@ fun HeroHeader(
             }
 
             Spacer(modifier = Modifier.height(20.dp))
-
-            // iOS-Style High Impact Tagline
-            Text(
-                text = "6 months startup experience building multi-module Android & KMP apps deployed to production.",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-                lineHeight = 24.sp
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = profile.bio,
@@ -116,9 +111,9 @@ fun HeroHeader(
             Spacer(modifier = Modifier.height(20.dp))
 
             // Primary Action Buttons (CTAs)
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+            FlowRowLayout(
+                horizontalSpacing = 10.dp,
+                verticalSpacing = 10.dp
             ) {
                 socialLinks.forEach { link ->
                     IOSCtaButton(
