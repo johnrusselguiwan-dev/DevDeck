@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.composeCompiler)
 }
 
+compose.resources {
+    packageOfResClass = "com.example.devdeck.shared.generated.resources"
+}
+
 configurations.all {
     resolutionStrategy {
         force("org.jetbrains.skiko:skiko:0.8.18")
@@ -54,10 +58,12 @@ kotlin {
             implementation(libs.compose.uiTooling)
         }
         commonMain.dependencies {
+            implementation(compose.components.resources)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
+            implementation(compose.materialIconsExtended)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -76,6 +82,14 @@ kotlin {
 android {
     namespace = "com.example.devdeck.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+
+    lint {
+        abortOnError = true
+        checkDependencies = true
+        ignoreTestSources = true
+        error += listOf("HardcodedText", "ResourceAsColor")
+        disable += listOf("QueryAllPackagesPermission")
+    }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
