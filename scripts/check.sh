@@ -26,6 +26,10 @@ echo "▶ Running Detekt..."
 $GRADLEW detekt --warning-mode all
 
 echo "▶ Running Unit Tests..."
-$GRADLEW test --warning-mode all
+$GRADLEW :shared:testDebugUnitTest :shared:wasmJsBrowserTest --warning-mode all
+
+if [ "$OS" = "Darwin" ]; then
+  $GRADLEW :shared:iosSimulatorArm64Test --warning-mode all
+fi
 
 echo "✅ All checks passed!"

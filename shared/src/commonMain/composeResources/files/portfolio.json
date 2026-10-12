@@ -1,0 +1,270 @@
+{
+    "profile": {
+        "name": "John Russel A. Guiwan",
+        "title": "Junior Android Developer",
+        "bio": "Junior Android Developer skilled in Native Kotlin, Java, Jetpack Compose, and Multi-Module Architecture. Experienced in building production Android apps, KMP cross-platform modules, GPS geofencing, QR code scanning, and automated CI/CD pipelines. Accelerated from Trainee to Core Mobile Contributor at HeroApps.",
+        "location": "Camarines Norte, Philippines",
+        "yearsExperience": "BSIS Graduate (GWA 1.5471) • Junior Android Developer",
+        "playStoreAppsCount": 3,
+        "coreFocus": [
+            "Native Android & Jetpack Compose",
+            "Kotlin Multiplatform (KMP/CMP)",
+            "Multi-Module Gradle Clean Architecture",
+            "GPS Geofencing, Camera QR & Motion Sensors",
+            "Firebase Services & CI/CD Pipelines",
+            "Google Play Console Release Management"
+        ]
+    },
+    "skills": [
+        {
+            "id": "s1",
+            "name": "Native Kotlin & Coroutines",
+            "category": "MOBILE_DEV",
+            "specialty": "Primary Language",
+            "description": "Idiomatic Kotlin, Coroutines, StateFlow/SharedFlow, extension functions, sealed interfaces, and reactive state management."
+        },
+        {
+            "id": "s2",
+            "name": "Java & Android SDK",
+            "category": "MOBILE_DEV",
+            "specialty": "Core Native",
+            "description": "Core Java OOP principles, Android lifecycle, Services, BroadcastReceivers, and native Android application development."
+        },
+        {
+            "id": "s3",
+            "name": "Jetpack Compose UI",
+            "category": "MOBILE_DEV",
+            "specialty": "Declarative UI",
+            "description": "Declarative UI creation, state management, custom modifiers, Material 3 design system, and smooth layout animations."
+        },
+        {
+            "id": "s4",
+            "name": "Hardware & Device Features",
+            "category": "MOBILE_DEV",
+            "specialty": "Device APIs",
+            "description": "GPS polygon geofencing, Camera QR code scanning, shake-to-reveal motion sensor triggers, and interactive UI components."
+        },
+        {
+            "id": "s5",
+            "name": "Retrofit & OkHttp REST APIs",
+            "category": "MOBILE_DEV",
+            "specialty": "Networking",
+            "description": "RESTful networking, JSON serialization, auth interceptors, and custom API error handling."
+        },
+        {
+            "id": "s6",
+            "name": "Kotlin Multiplatform (KMP / CMP)",
+            "category": "CROSS_PLATFORM",
+            "specialty": "Cross-Platform",
+            "description": "Shared Kotlin business logic and Compose Multiplatform UI across Android, iOS, and Web (WasmJS) deployments."
+        },
+        {
+            "id": "s7",
+            "name": "Multi-Module Architecture",
+            "category": "ARCHITECTURE",
+            "specialty": "Scalable Systems",
+            "description": "Structuring Gradle projects into decoupled feature modules and core infrastructure libraries for clean component boundaries."
+        },
+        {
+            "id": "s8",
+            "name": "Clean Architecture & MVVM / MVI",
+            "category": "ARCHITECTURE",
+            "specialty": "Design Patterns",
+            "description": "Strict separation of concerns into Presentation, Domain, and Data layers with unidirectional data flow."
+        },
+        {
+            "id": "s9",
+            "name": "Dependency Injection (Koin / Hilt)",
+            "category": "ARCHITECTURE",
+            "specialty": "DI Frameworks",
+            "description": "Injecting ViewModels, repositories, and network services using Koin and Hilt."
+        },
+        {
+            "id": "s10",
+            "name": "Google Play Console & Billing",
+            "category": "DEVOPS",
+            "specialty": "App Publishing",
+            "description": "Managing testing tracks, app signing, Google Play Billing auditing, and trademark/IP policy dispute resolution."
+        },
+        {
+            "id": "s11",
+            "name": "Firebase Platform Services",
+            "category": "DEVOPS",
+            "specialty": "Cloud Services",
+            "description": "Firebase Auth (Phone OTP/Email), Firestore, FCM Push Alerts, Crashlytics, Remote Config, and App Distribution."
+        },
+        {
+            "id": "s12",
+            "name": "CI/CD & Custom Detekt Analysis",
+            "category": "DEVOPS",
+            "specialty": "Automation",
+            "description": "GitHub Actions CI/CD workflows, custom Detekt static code analysis rulesets for Compose, and automated release delivery."
+        }
+    ],
+    "experiences": [
+        {
+            "id": "exp1",
+            "role": "Junior Android Developer (ex-OJT)",
+            "company": "HeroApps Software Development Services",
+            "period": "Feb 12, 2026 – Present",
+            "isCurrent": true,
+            "summary": "Accelerated from Trainee to Core Mobile Contributor. Co-architected multi-module Gradle clean architecture and delivered 3 production mobile apps (Earn PH, MLBB Guide, LoL Guide). Awarded Best in OJT.",
+            "highlights": [
+                "Awarded Best in OJT for outstanding software development execution and production release delivery.",
+                "Co-architected Multi-Module Gradle Clean Architecture enforcing component boundaries across shared core and feature modules.",
+                "Engineered GPS polygon geofencing, Camera QR code ticket scanning, and shake-to-reveal motion sensor triggers for Earn PH.",
+                "Audited Google Play Billing integration and resolved Philippine offline cash pending payment refund investigations.",
+                "Configured GitHub Actions CI/CD workflows and authored a custom Detekt static code analysis ruleset for Jetpack Compose.",
+                "Resolved Google Play Store trademark/IP policy flags to restore full store compliance and availability."
+            ],
+            "techStack": [
+                "Kotlin",
+                "Java",
+                "Jetpack Compose",
+                "Multi-Module",
+                "KMP",
+                "Firebase",
+                "GitHub Actions",
+                "Retrofit",
+                "Koin"
+            ]
+        },
+        {
+            "id": "exp2",
+            "role": "BS Information Systems Graduate",
+            "company": "Camarines Norte State College",
+            "period": "AY 2022 – 2026",
+            "isCurrent": false,
+            "summary": "Graduated with GWA 1.5471 (College Scholar). Awarded Academic Distinction, Best in OJT, and Best in Capstone Project Award.",
+            "highlights": [
+                "Graduated with Academic Distinction Award (GWA 1.5471).",
+                "Awarded Best in Capstone Project Award for 'MB_MIS / Museo Bulawan Management Information System'.",
+                "Awarded Best in OJT Award during industry software development internship at HeroApps.",
+                "AppCon 2023 Hackathon Contestant & BITSCON 2024 Participant."
+            ],
+            "techStack": [
+                "BSIS",
+                "GWA 1.5471",
+                "Academic Distinction",
+                "Best in Capstone",
+                "Best in OJT",
+                "React",
+                "Node.js",
+                "MySQL"
+            ]
+        }
+    ],
+    "projects": [
+        {
+            "id": "proj1",
+            "title": "Earn PH / Hero Checkin",
+            "subtitle": "Production Gamified Rewards App (Android & iOS)",
+            "description": "Cross-platform gamified rewards and venue check-in app. Features GPS polygon geofencing, Camera QR ticket scanning, shake-to-reveal motion sensors, dynamic Remote Config force-updates, DTI compliance forms, and GitHub Actions CI/CD with custom Detekt rules.",
+            "techBadges": [
+                "Kotlin Multiplatform",
+                "Compose Multiplatform",
+                "GPS Geofencing",
+                "Camera QR",
+                "Firebase",
+                "GitHub Actions"
+            ],
+            "playStoreUrl": null,
+            "githubUrl": null,
+            "isFeatured": true
+        },
+        {
+            "id": "proj2",
+            "title": "MLBB Game Guide",
+            "subtitle": "Production Android Gaming Companion App",
+            "description": "Published on Google Play Store. Features hero builds, counters, tier lists, Cloud Firestore integration, multi-language internationalization (English, Tagalog, Indonesian), and Google Play Billing audit resolution.",
+            "techBadges": [
+                "Kotlin",
+                "Jetpack Compose",
+                "Multi-Module",
+                "Firebase Auth",
+                "Play Billing",
+                "i18n"
+            ],
+            "playStoreUrl": "https://play.google.com/store/apps/details?id=com.heroapps.mlbbguide&pli=1",
+            "githubUrl": null,
+            "isFeatured": true
+        },
+        {
+            "id": "proj3",
+            "title": "LoL Game Guide",
+            "subtitle": "League of Legends & Wild Rift Companion Guide",
+            "description": "Built from scratch to production on Google Play Store. Features champion stats, rune setups, throttled JavaScript web scrapers for live game patch data, and Play Store IP/trademark policy resolution.",
+            "techBadges": [
+                "Kotlin",
+                "Jetpack Compose",
+                "Multi-Module",
+                "Web Scraping",
+                "Play Console",
+                "MVVM"
+            ],
+            "playStoreUrl": "https://play.google.com/store/apps/details?id=com.heroapps.lolguide",
+            "githubUrl": null,
+            "isFeatured": true
+        },
+        {
+            "id": "proj4",
+            "title": "DevDeck Portfolio",
+            "subtitle": "Cross-Platform KMP Developer Portfolio",
+            "description": "Interactive developer portfolio built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). Features single-page continuous feed, two-way scroll synchronization, adaptive responsive layouts across Android, iOS, and Web (WasmJS), and Cupertino/Material 3 styling.",
+            "techBadges": [
+                "Kotlin Multiplatform",
+                "Compose Multiplatform",
+                "WasmJS",
+                "Material 3",
+                "Clean Architecture",
+                "Koin"
+            ],
+            "playStoreUrl": null,
+            "githubUrl": "https://github.com/johnrusselguiwan-dev/DevDeck",
+            "isFeatured": true
+        },
+        {
+            "id": "proj5",
+            "title": "Museo Bulawan MIS / CMS (MB_MIS)",
+            "subtitle": "Award-Winning Capstone Full-Stack Platform",
+            "description": "Awarded Best in Capstone Project at Camarines Norte State College. Full-stack management information system for museum artifact cataloging, metadata management, and appointment scheduling.",
+            "techBadges": [
+                "Best Capstone Award",
+                "React",
+                "Node.js",
+                "Express.js",
+                "MySQL",
+                "Tailwind CSS"
+            ],
+            "playStoreUrl": null,
+            "githubUrl": "https://github.com/hachisnail/museo-bulawan-cms.git",
+            "isFeatured": true
+        }
+    ],
+    "socialLinks": [
+        {
+            "id": "soc1",
+            "platform": "GitHub",
+            "url": "https://github.com/johnrusselguiwan-dev",
+            "iconIdentifier": "github"
+        },
+        {
+            "id": "soc2",
+            "platform": "LinkedIn",
+            "url": "https://www.linkedin.com/in/john-russel-guiwan-202391183/",
+            "iconIdentifier": "linkedin"
+        },
+        {
+            "id": "soc3",
+            "platform": "Email",
+            "url": "mailto:russelguiwan@gmail.com",
+            "iconIdentifier": "email"
+        },
+        {
+            "id": "soc4",
+            "platform": "Phone",
+            "url": "tel:09669869030",
+            "iconIdentifier": "phone"
+        }
+    ]
+}
