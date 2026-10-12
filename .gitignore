@@ -31,3 +31,16 @@ secret.properties
 *.jks
 *.keystore
 /androidApp/release/
+
+# Local environment, Firebase credentials, and private key files
+.env
+.env.*
+!.env.example
+*serviceAccount*.json
+*service-account*.json
+*.p12
+*.pfx
+*.key
+.firebase/
+firebase-debug.log*
+firepit-log.txt
