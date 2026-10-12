@@ -11,10 +11,14 @@ fun main() {
         document.getElementById("spinner")?.let { it.parentNode?.removeChild(it) }
 
         val body = document.body ?: return
-        ComposeViewport(body) {
+        ComposeViewport(body, configure = { isA11YEnabled = true }) {
             App(
                 onOpenUrl = { url ->
-                    window.open(url, "_blank")
+                    if (url.startsWith("mailto:") || url.startsWith("tel:")) {
+                        window.location.href = url
+                    } else {
+                        window.open(url, "_blank", "noopener,noreferrer")
+                    }
                 }
             )
         }

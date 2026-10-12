@@ -8,15 +8,24 @@ import com.example.devdeck.domain.model.SkillCategory
 import com.example.devdeck.domain.model.SocialLink
 import com.example.devdeck.presentation.common.theme.ThemeMode
 
-enum class NavigationTab(val title: String) {
-    OVERVIEW("Overview"),
-    PROJECTS("Projects"),
-    SKILLS("Skills"),
-    EXPERIENCE("Experience")
+enum class PortfolioSection(val title: String, val index: Int) {
+    ABOUT("About", 0),
+    EXPERIENCE("Experience", 1),
+    PROJECTS("Projects", 2),
+    SKILLS("Skills", 3),
+    CONTACT("Contact", 4);
+
+    companion object {
+        fun fromIndex(index: Int): PortfolioSection {
+            return entries.find { it.index == index } ?: ABOUT
+        }
+    }
 }
 
 sealed interface HomeUiState {
-    data object Loading : HomeUiState
+    val themeMode: ThemeMode
+
+    data class Loading(override val themeMode: ThemeMode = ThemeMode.SYSTEM) : HomeUiState
     data class Success(
         val profile: DeveloperProfile,
         val skills: List<Skill>,
@@ -24,8 +33,11 @@ sealed interface HomeUiState {
         val projects: List<Project>,
         val socialLinks: List<SocialLink>,
         val selectedSkillCategory: SkillCategory? = null,
-        val selectedTab: NavigationTab = NavigationTab.OVERVIEW,
-        val themeMode: ThemeMode = ThemeMode.SYSTEM
+        override val themeMode: ThemeMode = ThemeMode.SYSTEM
     ) : HomeUiState
-    data class Error(val message: String) : HomeUiState
+
+    data class Error(
+        val message: String,
+        override val themeMode: ThemeMode = ThemeMode.SYSTEM
+    ) : HomeUiState
 }
