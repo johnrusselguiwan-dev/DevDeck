@@ -1,32 +1,37 @@
 package com.example.devdeck.presentation.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.devdeck.domain.model.Skill
 import com.example.devdeck.domain.model.SkillCategory
 
+/**
+ * Modern, Apple/Stripe-inspired Grouped Skills Section using vector icons.
+ */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SkillsSection(
@@ -35,148 +40,98 @@ fun SkillsSection(
     onCategorySelected: (SkillCategory?) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val filteredSkills = if (selectedCategory != null) {
-        skills.filter { it.category == selectedCategory }
-    } else {
-        skills
-    }
+    val groupedSkills = skills.groupBy { it.category }
+    val categories = SkillCategory.entries.filter { selectedCategory == null || it == selectedCategory }
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Categorized Technical Skills Matrix",
+            text = "Technical Competencies & Skills",
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
-
-        
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
-                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(16.dp))
-                .padding(6.dp)
-        ) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                IOSSegmentedPill(
-                    label = "All Skills",
-                    isSelected = selectedCategory == null,
-                    onClick = { onCategorySelected(null) }
-                )
-
-                SkillCategory.entries.forEach { cat ->
-                    IOSSegmentedPill(
-                        label = cat.displayName,
-                        isSelected = selectedCategory == cat,
-                        onClick = { onCategorySelected(cat) }
-                    )
-                }
-            }
-        }
-
         Spacer(modifier = Modifier.height(16.dp))
 
-        
-        Column(
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            filteredSkills.forEach { skill ->
-                IOSSkillCard(skill = skill)
+        FlowRowLayout(horizontalSpacing = 8.dp, verticalSpacing = 4.dp) {
+            FilterChip(
+                selected = selectedCategory == null,
+                onClick = { onCategorySelected(null) },
+                label = { Text("All") }
+            )
+            SkillCategory.entries.forEach { category ->
+                FilterChip(
+                    selected = selectedCategory == category,
+                    onClick = { onCategorySelected(category) },
+                    label = { Text(category.displayName) }
+                )
             }
         }
-    }
-}
 
-@Composable
-private fun IOSSegmentedPill(
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit
-) {
-    val bg = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primaryContainer
-    val fg = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurface
+        Spacer(modifier = Modifier.height(12.dp))
 
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(bg)
-            .border(
-                width = if (isSelected) 0.dp else 1.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 8.dp)
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = fg,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-        )
-    }
-}
-
-@Composable
-private fun IOSSkillCard(
-    skill: Skill,
-    modifier: Modifier = Modifier
-) {
-    IOSMonochromeCard(
-        modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        IOSMonochromeCard(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = skill.name,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                categories.forEachIndexed { index, category ->
+                    val categorySkills = groupedSkills[category] ?: emptyList()
+                    val categoryIcon: ImageVector = when (category) {
+                        SkillCategory.MOBILE_DEV -> Icons.Default.Phone
+                        SkillCategory.CROSS_PLATFORM -> Icons.Default.Share
+                        SkillCategory.ARCHITECTURE -> Icons.AutoMirrored.Filled.List
+                        SkillCategory.DEVOPS -> Icons.Default.Build
+                    }
 
-            TechBadge(text = skill.category.displayName)
-        }
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        FlowRowLayout(horizontalSpacing = 12.dp, verticalSpacing = 8.dp) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = categoryIcon,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = category.displayName,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
 
-        Spacer(modifier = Modifier.height(6.dp))
+                            TechBadge(text = "${categorySkills.size} Competencies")
+                        }
 
-        Text(
-            text = skill.description,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+                        // Flow Row of Skill Badges
+                        FlowRowLayout(
+                            horizontalSpacing = 8.dp,
+                            verticalSpacing = 8.dp
+                        ) {
+                            categorySkills.forEach { skill ->
+                                TechBadge(text = skill.name)
+                            }
+                        }
+                    }
 
-        Spacer(modifier = Modifier.height(14.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            LinearProgressIndicator(
-                progress = { skill.level / 100f },
-                modifier = Modifier
-                    .weight(1f)
-                    .height(6.dp)
-                    .clip(CircleShape),
-                color = MaterialTheme.colorScheme.onSurface,
-                trackColor = MaterialTheme.colorScheme.primaryContainer
-            )
-
-            Text(
-                text = "${skill.level}%",
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+                    if (index < categories.lastIndex) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
+                            thickness = 1.dp
+                        )
+                    }
+                }
+            }
         }
     }
 }

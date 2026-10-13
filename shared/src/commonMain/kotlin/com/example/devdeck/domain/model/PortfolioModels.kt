@@ -1,35 +1,38 @@
 package com.example.devdeck.domain.model
 
+import kotlinx.serialization.Required
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DeveloperProfile(
-    val name: String = "Joro Developer",
-    val title: String = "Strong Junior / Junior+ Android & KMP Engineer",
-    val bio: String = "Mobile & Cross-Platform Engineer with 6 months of startup execution. Delivered production apps to the Google Play Store, engineered KMP shared modules, and established automated CI/CD release pipelines.",
-    val location: String = "Remote / Worldwide",
-    val yearsExperience: String = "6 Months Startup Execution",
-    val playStoreAppsCount: Int = 2,
-    val coreFocus: List<String> = listOf(
-        "Native Android & Jetpack Compose",
-        "Kotlin Multiplatform (KMP/CMP)",
-        "Clean Architecture + MVVM",
-        "Google Play Console Pipelines"
-    )
+    val name: String,
+    val title: String,
+    val bio: String,
+    val location: String,
+    val yearsExperience: String,
+    val playStoreAppsCount: Int,
+    val coreFocus: List<String>
 )
 
+@Serializable
 enum class SkillCategory(val displayName: String) {
-    ARCHITECTURE("Architecture & System Design"),
-    MOBILE_NETWORK("Core Mobile & Network"),
-    CROSS_PLATFORM("Cross-Platform & Modern Stack"),
-    DEVOPS("Lifecycle & DevOps")
+    MOBILE_DEV("Android & Mobile Dev"),
+    CROSS_PLATFORM("Multiplatform & KMP"),
+    ARCHITECTURE("Architecture & Design"),
+    DEVOPS("DevOps & Play Console")
 }
 
+@Serializable
 data class Skill(
     val id: String,
     val name: String,
     val category: SkillCategory,
-    val level: Int, 
+    @Required
+    val specialty: String = "Core Expertise",
     val description: String
 )
 
+@Serializable
 data class Experience(
     val id: String,
     val role: String,
@@ -41,6 +44,7 @@ data class Experience(
     val techStack: List<String>
 )
 
+@Serializable
 data class Project(
     val id: String,
     val title: String,
@@ -49,9 +53,11 @@ data class Project(
     val techBadges: List<String>,
     val playStoreUrl: String? = null,
     val githubUrl: String? = null,
+    @Required
     val isFeatured: Boolean = true
 )
 
+@Serializable
 data class SocialLink(
     val id: String,
     val platform: String,

@@ -1,237 +1,741 @@
 package com.example.devdeck.presentation.ui.home
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.devdeck.domain.model.SocialLink
+import com.example.devdeck.presentation.common.WindowWidthSizeClass
+import com.example.devdeck.presentation.common.calculateWindowWidthSizeClass
 import com.example.devdeck.presentation.common.theme.DevDeckTheme
+import com.example.devdeck.presentation.common.theme.ThemeMode
 import com.example.devdeck.presentation.ui.components.ContactSection
 import com.example.devdeck.presentation.ui.components.ExperienceTimeline
+import com.example.devdeck.presentation.ui.components.FlowRowLayout
 import com.example.devdeck.presentation.ui.components.HeroHeader
+import com.example.devdeck.presentation.ui.components.IOSMonochromeCard
 import com.example.devdeck.presentation.ui.components.KeyHighlightsBanner
 import com.example.devdeck.presentation.ui.components.ProjectsShowcase
 import com.example.devdeck.presentation.ui.components.SkillsSection
+import com.example.devdeck.presentation.ui.components.getSocialIcon
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * iOS/macOS-Inspired Single-Page Portfolio Layout for DevDeck.
+ *
+ * Employs Cupertino/Apple design aesthetics:
+ * - Inset grouped surface containers with soft rounded corners (20dp-24dp)
+ * - Translucent frosted top/bottom bars with blur/alpha
+ * - Smooth top & bottom fading edges for scrollable feeds
+ * - macOS/iPadOS-style sidebar navigation menu with animated selection pills
+ * - Adaptive layout switching between Desktop Split-View (macOS style) and Mobile Feed (iOS style)
+ */
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
     onOpenUrl: (String) -> Unit = {}
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
-    val isDark = when (val state = uiState) {
-        is HomeUiState.Success -> state.isDarkMode
-        else -> true
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val themeMode = uiState.themeMode
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val activeSection by remember(listState) {
+        derivedStateOf {
+            val layout = listState.layoutInfo
+            activePortfolioSection(
+                items = layout.visibleItemsInfo.map { SectionBounds(it.index, it.offset, it.size) },
+                viewportStart = layout.viewportStartOffset,
+                viewportEnd = layout.viewportEndOffset,
+                atEnd = !listState.canScrollForward
+            )
+        }
+    }
+    val scrollToSection: (PortfolioSection) -> Unit = { section ->
+        coroutineScope.launch { listState.animateScrollToItem(section.index) }
     }
 
-    DevDeckTheme(darkTheme = isDark) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "DevDeck",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = "• KMP Portfolio",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    },
-                    actions = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            Text(
-                                text = if (isDark) "🌙 Dark" else "☀️ Light",
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Switch(
-                                checked = isDark,
-                                onCheckedChange = { viewModel.toggleDarkMode() },
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                    )
-                )
-            },
-            containerColor = MaterialTheme.colorScheme.surface
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                when (val state = uiState) {
-                    is HomeUiState.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+    DevDeckTheme(themeMode = themeMode) {
+        BoxWithConstraints(
+            modifier = modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            val windowSizeClass = calculateWindowWidthSizeClass(maxWidth)
+            val isCompact = windowSizeClass == WindowWidthSizeClass.COMPACT
 
-                    is HomeUiState.Error -> {
+            when (val state = uiState) {
+                is HomeUiState.Loading -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
+                }
+
+                is HomeUiState.Error -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
+                    ) {
                         Text(
                             text = state.message,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.align(Alignment.Center)
+                            color = MaterialTheme.colorScheme.error
                         )
-                    }
-
-                    is HomeUiState.Success -> {
-                        BoxWithConstraints(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            val isWideScreen = maxWidth > 840.dp
-
-                            if (isWideScreen) {
-                                
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(24.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(24.dp)
-                                ) {
-                                    
-                                    Column(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        HeroHeader(
-                                            profile = state.profile,
-                                            socialLinks = state.socialLinks,
-                                            onOpenUrl = onOpenUrl
-                                        )
-
-                                        Spacer(modifier = Modifier.height(20.dp))
-
-                                        KeyHighlightsBanner()
-
-                                        Spacer(modifier = Modifier.height(20.dp))
-
-                                        ContactSection(
-                                            socialLinks = state.socialLinks,
-                                            onOpenUrl = onOpenUrl
-                                        )
-                                    }
-
-                                    
-                                    Column(
-                                        modifier = Modifier.weight(1.2f)
-                                    ) {
-                                        ProjectsShowcase(
-                                            projects = state.projects,
-                                            onOpenUrl = onOpenUrl
-                                        )
-
-                                        Spacer(modifier = Modifier.height(24.dp))
-
-                                        SkillsSection(
-                                            skills = state.skills,
-                                            selectedCategory = state.selectedSkillCategory,
-                                            onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
-                                        )
-
-                                        Spacer(modifier = Modifier.height(24.dp))
-
-                                        ExperienceTimeline(experiences = state.experiences)
-                                    }
-                                }
-                            } else {
-                                
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                        .padding(horizontal = 16.dp, vertical = 16.dp)
-                                ) {
-                                    
-                                    HeroHeader(
-                                        profile = state.profile,
-                                        socialLinks = state.socialLinks,
-                                        onOpenUrl = onOpenUrl
-                                    )
-
-                                    Spacer(modifier = Modifier.height(20.dp))
-
-                                    
-                                    KeyHighlightsBanner()
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    
-                                    ProjectsShowcase(
-                                        projects = state.projects,
-                                        onOpenUrl = onOpenUrl
-                                    )
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    
-                                    SkillsSection(
-                                        skills = state.skills,
-                                        selectedCategory = state.selectedSkillCategory,
-                                        onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
-                                    )
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    
-                                    ExperienceTimeline(experiences = state.experiences)
-
-                                    Spacer(modifier = Modifier.height(24.dp))
-
-                                    
-                                    ContactSection(
-                                        socialLinks = state.socialLinks,
-                                        onOpenUrl = onOpenUrl
-                                    )
-
-                                    Spacer(modifier = Modifier.height(40.dp))
-                                }
-                            }
+                        Button(onClick = viewModel::loadPortfolioData) {
+                            Text("Retry")
                         }
                     }
                 }
+
+                is HomeUiState.Success -> {
+                    if (isCompact) {
+                        IosStyleMobileLayout(
+                            state = state,
+                            viewModel = viewModel,
+                            onOpenUrl = onOpenUrl,
+                            themeMode = themeMode,
+                            listState = listState,
+                            activeSection = activeSection,
+                            onSectionSelected = scrollToSection
+                        )
+                    } else {
+                        MacOsStyleSplitLayout(
+                            state = state,
+                            viewModel = viewModel,
+                            onOpenUrl = onOpenUrl,
+                            themeMode = themeMode,
+                            listState = listState,
+                            activeSection = activeSection,
+                            onSectionSelected = scrollToSection
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+//  macOS / iPadOS Style Split Layout (Desktop & Web)
+// ─────────────────────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MacOsStyleSplitLayout(
+    state: HomeUiState.Success,
+    viewModel: HomeViewModel,
+    onOpenUrl: (String) -> Unit,
+    themeMode: ThemeMode,
+    listState: LazyListState,
+    activeSection: PortfolioSection,
+    onSectionSelected: (PortfolioSection) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                modifier = Modifier
+                    .widthIn(max = 1280.dp)
+                    .fillMaxSize()
+                    .padding(horizontal = 28.dp, vertical = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(36.dp)
+            ) {
+                // ── macOS Sidebar Pane (Fixed ~38% Width, Scrollable if short) ──
+                Surface(
+                    modifier = Modifier
+                        .weight(0.38f)
+                        .fillMaxHeight(),
+                    shape = RoundedCornerShape(24.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    tonalElevation = 2.dp
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(24.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(20.dp)
+                        ) {
+                            // Top Bar Header & Theme Selector
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "DevDeck",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+
+                                ThemeDropdownButton(
+                                    currentTheme = themeMode,
+                                    onThemeSelected = { viewModel.setThemeMode(it) }
+                                )
+                            }
+
+                            // Hero Profile Summary
+                            Column {
+                                Text(
+                                    text = state.profile.name,
+                                    style = MaterialTheme.typography.displayMedium.copy(fontSize = 32.sp),
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = state.profile.title,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = state.profile.bio,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    lineHeight = 22.sp
+                                )
+                            }
+
+                            // Status Pill
+                            StatusBadge(text = "Available for opportunities")
+
+                            // macOS / iOS Style Sidebar Navigation Menu
+                            IOSSidebarNavMenu(
+                                activeSection = activeSection,
+                                onSectionSelected = onSectionSelected,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // Social Link Buttons pinned at bottom with FlowRow wrapping
+                        SocialLinksRow(
+                            socialLinks = state.socialLinks,
+                            onOpenUrl = onOpenUrl
+                        )
+                    }
+                }
+
+                // ── Right Scrollable Feed Pane (~62% Width with Fading Top/Bottom Edges) ──
+                BoxWithConstraints(
+                    modifier = Modifier
+                        .weight(0.62f)
+                        .fillMaxHeight()
+                ) {
+                    val windowSizeClass = calculateWindowWidthSizeClass(maxWidth)
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(vertical = 12.dp),
+                        verticalArrangement = Arrangement.spacedBy(48.dp)
+                    ) {
+                        // Section 0: About & Key Highlights
+                        item(key = PortfolioSection.ABOUT.name) {
+                            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                                AboutSummaryCard(bio = state.profile.bio)
+
+                                KeyHighlightsBanner(
+                                    windowSizeClass = windowSizeClass
+                                )
+                            }
+                        }
+
+                        // Section 1: Experience & Career Timeline
+                        item(key = PortfolioSection.EXPERIENCE.name) {
+                            ExperienceTimeline(
+                                experiences = state.experiences,
+                                windowSizeClass = windowSizeClass
+                            )
+                        }
+
+                        // Section 2: Projects Showcase
+                        item(key = PortfolioSection.PROJECTS.name) {
+                            ProjectsShowcase(
+                                projects = state.projects,
+                                onOpenUrl = onOpenUrl
+                            )
+                        }
+
+                        // Section 3: Technical Skills Matrix
+                        item(key = PortfolioSection.SKILLS.name) {
+                            SkillsSection(
+                                skills = state.skills,
+                                selectedCategory = state.selectedSkillCategory,
+                                onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
+                            )
+                        }
+
+                        // Section 4: Contact & Professional Links
+                        item(key = PortfolioSection.CONTACT.name) {
+                            ContactSection(
+                                socialLinks = state.socialLinks,
+                                onOpenUrl = onOpenUrl,
+                                windowSizeClass = windowSizeClass
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AboutSummaryCard(
+    bio: String,
+    modifier: Modifier = Modifier
+) {
+    IOSMonochromeCard(
+        modifier = modifier,
+        title = "About & Engineering Focus",
+        subtitle = "Specialized in Production Android & Kotlin Multiplatform"
+    ) {
+        Text(
+            text = bio,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            lineHeight = 26.sp
+        )
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+//  iOS Style Mobile Layout (Single Column Feed)
+// ─────────────────────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun IosStyleMobileLayout(
+    state: HomeUiState.Success,
+    viewModel: HomeViewModel,
+    onOpenUrl: (String) -> Unit,
+    themeMode: ThemeMode,
+    listState: LazyListState,
+    activeSection: PortfolioSection,
+    onSectionSelected: (PortfolioSection) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        contentWindowInsets = WindowInsets.safeDrawing,
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "DevDeck",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                actions = {
+                    ThemeDropdownButton(
+                        currentTheme = themeMode,
+                        onThemeSelected = { viewModel.setThemeMode(it) }
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.70f)
+                )
+            )
+        },
+        bottomBar = {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f),
+                tonalElevation = 8.dp,
+                modifier = Modifier.clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            ) {
+                PortfolioSection.entries.forEach { section ->
+                    val selected = activeSection == section
+                    val icon: ImageVector = when (section) {
+                        PortfolioSection.ABOUT -> Icons.Default.Person
+                        PortfolioSection.EXPERIENCE -> Icons.Default.DateRange
+                        PortfolioSection.PROJECTS -> Icons.AutoMirrored.Filled.List
+                        PortfolioSection.SKILLS -> Icons.Default.Build
+                        PortfolioSection.CONTACT -> Icons.Default.Email
+                    }
+
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = { onSectionSelected(section) },
+                        icon = {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = section.title,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxWidth(),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(28.dp)
+            ) {
+                item(key = PortfolioSection.ABOUT.name) {
+                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                        HeroHeader(
+                            profile = state.profile,
+                            socialLinks = state.socialLinks,
+                            onOpenUrl = onOpenUrl,
+                            windowSizeClass = WindowWidthSizeClass.COMPACT
+                        )
+                        KeyHighlightsBanner(
+                            windowSizeClass = WindowWidthSizeClass.COMPACT
+                        )
+                    }
+                }
+
+                item(key = PortfolioSection.EXPERIENCE.name) {
+                    ExperienceTimeline(
+                        experiences = state.experiences,
+                        windowSizeClass = WindowWidthSizeClass.COMPACT
+                    )
+                }
+
+                item(key = PortfolioSection.PROJECTS.name) {
+                    ProjectsShowcase(
+                        projects = state.projects,
+                        onOpenUrl = onOpenUrl
+                    )
+                }
+
+                item(key = PortfolioSection.SKILLS.name) {
+                    SkillsSection(
+                        skills = state.skills,
+                        selectedCategory = state.selectedSkillCategory,
+                        onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
+                    )
+                }
+
+                item(key = PortfolioSection.CONTACT.name) {
+                    ContactSection(
+                        socialLinks = state.socialLinks,
+                        onOpenUrl = onOpenUrl,
+                        windowSizeClass = WindowWidthSizeClass.COMPACT
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────
+//  Fading Edges Modifier for Smooth Top & Bottom Scroll Transitions
+// ─────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────
+//  iOS/macOS-Style Sidebar Navigation Menu
+// ─────────────────────────────────────────────────────────
+
+@Composable
+fun IOSSidebarNavMenu(
+    activeSection: PortfolioSection,
+    onSectionSelected: (PortfolioSection) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        PortfolioSection.entries.forEach { section ->
+            val isSelected = activeSection == section
+
+            val bgColor by animateColorAsState(
+                targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                animationSpec = tween(durationMillis = 250)
+            )
+            val fgColor by animateColorAsState(
+                targetValue = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
+                animationSpec = tween(durationMillis = 250)
+            )
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .selectable(selected = isSelected, role = Role.Tab) { onSectionSelected(section) },
+                shape = RoundedCornerShape(14.dp),
+                color = bgColor
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    Text(
+                        text = section.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
+                        color = fgColor
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ─── Sub-components ───
+
+@Composable
+private fun StatusBadge(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(20.dp),
+        color = MaterialTheme.colorScheme.primaryContainer,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary)
+            )
+            Text(
+                text = text,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SocialLinksRow(
+    socialLinks: List<SocialLink>,
+    onOpenUrl: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FlowRowLayout(
+        modifier = modifier.fillMaxWidth(),
+        horizontalSpacing = 10.dp,
+        verticalSpacing = 8.dp
+    ) {
+        socialLinks.forEach { link ->
+            val icon = getSocialIcon(link.platform)
+
+            Surface(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onOpenUrl(link.url) },
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.size(16.dp)
+                    )
+
+                    Text(
+                        text = link.platform,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeDropdownButton(
+    currentTheme: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "Theme Options",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        text = "Appearance",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                },
+                onClick = {},
+                enabled = false
+            )
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+
+            ThemeMode.entries.forEach { mode ->
+                DropdownMenuItem(
+                    text = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = mode.displayName,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (mode == currentTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                                fontWeight = if (mode == currentTheme) FontWeight.Bold else FontWeight.Normal
+                            )
+                            if (mode == currentTheme) {
+                                Text(
+                                    text = "✓",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    },
+                    onClick = {
+                        onThemeSelected(mode)
+                        expanded = false
+                    }
+                )
             }
         }
     }
