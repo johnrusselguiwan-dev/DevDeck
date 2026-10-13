@@ -1,10 +1,27 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
 }
+
+if (file("google-services.json").isFile) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
+val releaseSigningFile = rootProject.file("secret.properties")
+val releaseSigningProperties = Properties().apply {
+    if (releaseSigningFile.isFile) {
+        releaseSigningFile.inputStream().use { load(it) }
+    }
+}
+
+fun releaseSigningProperty(name: String): String =
+    releaseSigningProperties.getProperty(name)?.takeIf { it.isNotBlank() }
+        ?: error("Missing signing property '$name' in secret.properties")
 
 dependencies {
     implementation(project(":shared"))
@@ -37,8 +54,20 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        if (releaseSigningFile.isFile) {
+            create("release") {
+                storeFile = rootProject.file(releaseSigningProperty("RELEASE_STORE_FILE"))
+                storePassword = releaseSigningProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = releaseSigningProperty("RELEASE_KEY_ALIAS")
+                keyPassword = releaseSigningProperty("RELEASE_KEY_PASSWORD")
+                require(storeFile?.isFile == true) { "Configured release keystore does not exist" }
+            }
+        }
+    }
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

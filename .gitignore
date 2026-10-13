@@ -17,3 +17,36 @@ captures
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
+
+# Graphify machine-local caches and query history
+graphify-out/cache/
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/.rebuild.lock
+graphify-out/query-log.jsonl
+
+# Local signing credentials and generated release artifacts
+secret.properties
+/keystore/
+*.jks
+*.keystore
+/androidApp/release/
+
+# Local environment, Firebase credentials, and private key files
+.env
+.env.*
+!.env.example
+*serviceAccount*.json
+*service-account*.json
+*service_account*.json
+*firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
+*.pem
+*.p8
+*.p12
+*.pfx
+*.key
+.firebase/
+firebase-debug.log*
+firepit-log.txt
