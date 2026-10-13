@@ -1,5 +1,6 @@
 package com.example.devdeck.di
 
+import com.example.devdeck.data.BundledPortfolioLoader
 import com.example.devdeck.data.repository.PortfolioRepositoryImpl
 import com.example.devdeck.domain.repository.PortfolioRepository
 import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
@@ -11,6 +12,7 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val appModule = module {
+    single { BundledPortfolioLoader() }
     singleOf(::PortfolioRepositoryImpl) bind PortfolioRepository::class
     factoryOf(::GetPortfolioDataUseCase)
     viewModelOf(::HomeViewModel)
