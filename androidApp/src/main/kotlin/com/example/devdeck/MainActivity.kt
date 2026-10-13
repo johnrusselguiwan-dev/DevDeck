@@ -1,8 +1,10 @@
 package com.example.devdeck
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,8 +22,8 @@ class MainActivity : ComponentActivity() {
                     try {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                         startActivity(intent)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    } catch (_: ActivityNotFoundException) {
+                        Toast.makeText(this, "No app is available to open this link", Toast.LENGTH_LONG).show()
                     }
                 }
             )

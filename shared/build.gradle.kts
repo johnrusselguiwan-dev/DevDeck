@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -12,17 +13,7 @@ compose.resources {
     packageOfResClass = "com.example.devdeck.shared.generated.resources"
 }
 
-configurations.all {
-    resolutionStrategy {
-        force("org.jetbrains.skiko:skiko:0.8.18")
-        force("org.jetbrains.skiko:skiko-wasm-js:0.8.18")
-        force("org.jetbrains.skiko:skiko-js-wasm-runtime:0.8.18")
-        force("org.jetbrains.compose.runtime:runtime:1.7.3")
-        force("org.jetbrains.compose.ui:ui:1.7.3")
-        force("org.jetbrains.compose.foundation:foundation:1.7.3")
-        force("org.jetbrains.compose.material3:material3:1.7.3")
-    }
-}
+
 
 kotlin {
     listOf(
@@ -42,6 +33,11 @@ kotlin {
             commonWebpackConfig {
                 outputFileName = "devdeck.js"
             }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                }
+            }
         }
         binaries.executable()
     }
@@ -55,9 +51,9 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.compose.uiTooling)
         }
         commonMain.dependencies {
+            implementation(libs.kotlinx.serialization.json)
             implementation(compose.components.resources)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -75,8 +71,18 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        androidInstrumentedTest.dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.androidx.testExt.junit)
+            implementation(libs.androidx.test.runner)
         }
     }
+}
+
+dependencies {
+    add("debugImplementation", libs.compose.uiTooling)
 }
 
 android {
@@ -92,6 +98,7 @@ android {
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
