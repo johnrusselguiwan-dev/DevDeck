@@ -13,6 +13,8 @@ enum class ThemeMode(val displayName: String) {
 }
 
 private val DarkColorScheme = darkColorScheme(
+    background = IOSBackgroundDark,
+    onBackground = IOSTextPrimaryDark,
     primary = IOSTextPrimaryDark,
     onPrimary = IOSBackgroundDark,
     primaryContainer = IOSElevatedSurfaceDark,
@@ -29,6 +31,8 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
+    background = IOSBackgroundLight,
+    onBackground = IOSTextPrimaryLight,
     primary = IOSTextPrimaryLight,
     onPrimary = IOSSurfaceLight,
     primaryContainer = IOSElevatedSurfaceLight,

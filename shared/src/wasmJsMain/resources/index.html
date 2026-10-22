@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevDeck — Kotlin Multiplatform Portfolio</title>
+    <title>John Russel Guiwan — Android Developer | DevDeck</title>
+    <meta name="description" content="John Russel A. Guiwan, Junior Android Developer. Explore Kotlin and Jetpack Compose work, LoL release contributions, MLBB authentication, and EarnPH check-in integrations.">
+    <link rel="alternate" type="text/html" href="overview.html" title="Portfolio text version">
     <style>
         html, body {
             margin: 0;
@@ -12,6 +14,31 @@
             height: 100%;
             overflow: hidden;
             background-color: #09090B;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        nav {
+            display: flex;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 4px 20px;
+            padding: 4px 16px;
+            background: #18181b;
+            color: #f4f4f5;
+            font: 14px/1.4 system-ui, sans-serif;
+        }
+        nav a {
+            color: inherit;
+            padding: 8px 0;
+            text-underline-offset: 4px;
+        }
+        nav a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+        #portfolio-app { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+        @media (prefers-color-scheme: light) {
+            html, body { background: #fafafa; }
+            nav { background: #f4f4f5; color: #27272a; }
         }
         #spinner {
             position: fixed;
@@ -22,6 +49,12 @@
     </style>
 </head>
 <body>
+    <nav aria-label="Portfolio resources">
+        <a href="overview.html">Text version</a>
+        <a href="resume/John_Russel_Guiwan_Resume.pdf">Resume (PDF)</a>
+        <a href="mailto:russelguiwan@gmail.com">Email</a>
+    </nav>
+    <div id="portfolio-app">
     <div id="spinner">
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 50 50" role="presentation">
             <circle cx="25" cy="25" r="20" stroke="#333" stroke-width="4" fill="none"/>
@@ -32,6 +65,9 @@
             </circle>
         </svg>
     </div>
+    <noscript>Open the <a href="overview.html">portfolio text version</a> to read my experience and projects.</noscript>
+    </div>
+    <script src="analytics.js"></script>
     <script type="application/javascript" src="devdeck.js"></script>
 </body>
 </html>

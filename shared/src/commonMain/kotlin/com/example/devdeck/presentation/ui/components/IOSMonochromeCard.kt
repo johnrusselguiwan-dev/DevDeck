@@ -1,6 +1,5 @@
 package com.example.devdeck.presentation.ui.components
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,13 +25,8 @@ fun IOSMonochromeCard(
 ) {
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline,
-                shape = RoundedCornerShape(22.dp)
-            ),
-        shape = RoundedCornerShape(22.dp),
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surfaceVariant
     ) {
         Column(

@@ -75,7 +75,7 @@ class BundledPortfolioLoaderTest {
     fun missingDefaultedRequiredFieldsFail() {
         val root = json.parseToJsonElement(encoded()).jsonObject
         val profile = root.getValue("profile").jsonObject
-        profile.keys.forEach { key ->
+        (profile.keys - setOf("resumeUrl", "androidDownloadUrl", "websiteUrl")).forEach { key ->
             val changed = JsonObject(root + ("profile" to JsonObject(profile - key)))
             assertFailsWith<SerializationException>(key) { decodePortfolio(changed.toString()) }
         }
@@ -109,6 +109,53 @@ class BundledPortfolioLoaderTest {
         val linksOmitted = JsonObject(project - "playStoreUrl" - "githubUrl")
         val changed = JsonObject(root + ("projects" to JsonArray(listOf(linksOmitted))))
         assertEquals(fixture, decodePortfolio(changed.toString()))
+    }
+
+    @Test
+    fun projectContributionsAndEducationDecodeWithoutBreakingOlderContent() {
+        val snapshot = fixture.copy(
+            projects = listOf(fixture.projects.single().copy(contributions = listOf("Implemented search"))),
+            experiences = listOf(fixture.experiences.single().copy(isEducation = true))
+        )
+        assertEquals(snapshot, decodePortfolio(encoded(snapshot)))
+
+        val root = json.parseToJsonElement(encoded()).jsonObject
+        val project = root.getValue("projects").jsonArray.single().jsonObject
+        val experience = root.getValue("experiences").jsonArray.single().jsonObject
+        val olderContent = JsonObject(
+            root + mapOf(
+                "projects" to JsonArray(listOf(JsonObject(project - "contributions"))),
+                "experiences" to JsonArray(listOf(JsonObject(experience - "isEducation")))
+            )
+        )
+        assertEquals(fixture, decodePortfolio(olderContent.toString()))
+    }
+
+    @Test
+    fun optionalProfileResourceLinksAreValidated() {
+        val root = json.parseToJsonElement(encoded()).jsonObject
+        val profile = root.getValue("profile").jsonObject
+        val omitted = JsonObject(profile - "resumeUrl" - "androidDownloadUrl" - "websiteUrl")
+        assertEquals(fixture, decodePortfolio(JsonObject(root + ("profile" to omitted)).toString()))
+        val valid = fixture.copy(
+            profile = fixture.profile.copy(
+                resumeUrl = "https://example.com/resume.pdf",
+                androidDownloadUrl = "https://example.com/app.apk",
+                websiteUrl = "https://example.com"
+            )
+        )
+        assertEquals(valid, decodePortfolio(encoded(valid)))
+        listOf("", "https://", "javascript:alert(1)", "mailto:developer@example.com").forEach { url ->
+            listOf(
+                fixture.profile.copy(resumeUrl = url),
+                fixture.profile.copy(androidDownloadUrl = url),
+                fixture.profile.copy(websiteUrl = url)
+            ).forEach { invalid ->
+                assertFailsWith<IllegalArgumentException>(url) {
+                    decodePortfolio(encoded(fixture.copy(profile = invalid)))
+                }
+            }
+        }
     }
 
     @Test
@@ -149,6 +196,7 @@ class BundledPortfolioLoaderTest {
             fixture.copy(skills = listOf(fixture.skills.single().copy(specialty = ""))),
             fixture.copy(experiences = listOf(fixture.experiences.single().copy(highlights = listOf("")))),
             fixture.copy(projects = listOf(fixture.projects.single().copy(techBadges = listOf("")))),
+            fixture.copy(projects = listOf(fixture.projects.single().copy(contributions = listOf(" ")))),
             fixture.copy(socialLinks = listOf(fixture.socialLinks.single().copy(iconIdentifier = "")))
         )
         invalid.forEach { snapshot -> assertFailsWith<IllegalArgumentException> { decodePortfolio(encoded(snapshot)) } }
