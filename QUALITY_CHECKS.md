@@ -51,8 +51,7 @@ tests. Generated/build directories are excluded. Reports use repository-relative
 paths for portable CI diagnostics. Analysis uses the existing syntax-based gate
 without platform compilation/type resolution.
 Baseline paths are `config/detekt/baseline-<module>.xml`. The shared baseline
-records 40 unique existing issue signatures; the earlier Phase 2 report listed
-71 individual findings. Android currently
+records 40 unique existing issue signatures. Android currently
 has no baseline findings and needs no baseline file.
 
 The baseline does not fix those issues. Newly introduced issue signatures fail
