@@ -3,14 +3,9 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
-}
-
-if (file("google-services.json").isFile) {
-    apply(plugin = "com.google.gms.google-services")
 }
 
 val releaseSigningFile = rootProject.file("secret.properties")
@@ -42,6 +37,9 @@ android {
         ignoreTestSources = true
         error += listOf("HardcodedText", "ResourceAsColor")
         disable += listOf("QueryAllPackagesPermission")
+        htmlReport = true
+        xmlReport = true
+        sarifReport = true
     }
 
     defaultConfig {
@@ -50,6 +48,17 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+    }
+    flavorDimensions += "env"
+    productFlavors {
+        create("dev") {
+            dimension = "env"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+        create("prod") {
+            dimension = "env"
+        }
     }
     packaging {
         resources {

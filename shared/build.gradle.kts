@@ -13,6 +13,14 @@ compose.resources {
     packageOfResClass = "com.example.devdeck.shared.generated.resources"
 }
 
+val generatePortfolioOverview by tasks.registering(Exec::class) {
+    val generator = rootProject.file("scripts/generate-portfolio-overview.mjs")
+    val content = file("src/commonMain/composeResources/files/portfolio.json")
+    val output = layout.buildDirectory.dir("generated/portfolioOverview")
+    inputs.files(generator, content)
+    outputs.dir(output)
+    commandLine("node", generator.absolutePath, output.get().file("overview.html").asFile.absolutePath)
+}
 
 
 kotlin {
@@ -49,6 +57,9 @@ kotlin {
     }
     
     sourceSets {
+        wasmJsMain {
+            resources.srcDir(generatePortfolioOverview)
+        }
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
         }
@@ -95,6 +106,9 @@ android {
         ignoreTestSources = true
         error += listOf("HardcodedText", "ResourceAsColor")
         disable += listOf("QueryAllPackagesPermission")
+        htmlReport = true
+        xmlReport = true
+        sarifReport = true
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

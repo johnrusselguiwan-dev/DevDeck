@@ -23,18 +23,17 @@ Hosting excludes source maps, hidden files, and node_modules. HTML, JavaScript,
 and portfolio JSON use `Cache-Control: no-cache`. There is no SPA fallback:
 missing assets return 404.
 
-## Android Firebase configuration
+## Android variants
 
-Download `google-services.json` for package `com.example.devdeck` from Firebase
-Project settings and place it in `androidApp/`. The file is ignored by Git.
-Google Services Gradle plugin 4.5.0 processes it when present; builds without
-this local file skip the plugin. No Firebase product SDK or telemetry is added.
-If a future feature requires Firebase at runtime, make its config requirement
-explicit rather than relying on this optional setup.
+Android builds do not use the Google Services plugin or a Firebase SDK and do
+not require `google-services.json`. Firebase Hosting remains independent of
+the Android application.
 
-Firebase client IDs and client API keys are intended to be public when properly
-restricted; they do not replace API restrictions, IAM, or data security rules.
-Those cloud protections have not been audited by this change.
+Use `:androidApp:assembleDevDebug` for the development app
+(`com.example.devdeck.dev`) and `:androidApp:assembleProdRelease` for a production
+release (`com.example.devdeck`). Both flavors have debug and release variants;
+development and production can be installed together. APKs are generated under
+`androidApp/build/outputs/apk/<flavor>/<buildType>/`.
 
 ## Android signing
 

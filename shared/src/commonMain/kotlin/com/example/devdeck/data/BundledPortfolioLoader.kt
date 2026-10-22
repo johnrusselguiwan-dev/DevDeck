@@ -38,6 +38,9 @@ internal fun validatePortfolio(snapshot: PortfolioData) {
         validateText(yearsExperience, "profile.yearsExperience")
         require(playStoreAppsCount >= 0) { "profile.playStoreAppsCount must be nonnegative" }
         validateEntries(coreFocus, "profile.coreFocus")
+        resumeUrl?.let { validateUrl(it, "profile.resumeUrl", allowContact = false) }
+        androidDownloadUrl?.let { validateUrl(it, "profile.androidDownloadUrl", allowContact = false) }
+        websiteUrl?.let { validateUrl(it, "profile.websiteUrl", allowContact = false) }
     }
     validateIds(snapshot.skills.map { it.id }, "skills")
     snapshot.skills.forEach { skill ->
@@ -62,6 +65,7 @@ internal fun validatePortfolio(snapshot: PortfolioData) {
         validateText(project.subtitle, "$path.subtitle")
         validateText(project.description, "$path.description")
         validateEntries(project.techBadges, "$path.techBadges")
+        validateEntries(project.contributions, "$path.contributions")
         project.playStoreUrl?.let { validateUrl(it, "$path.playStoreUrl", allowContact = false) }
         project.githubUrl?.let { validateUrl(it, "$path.githubUrl", allowContact = false) }
     }

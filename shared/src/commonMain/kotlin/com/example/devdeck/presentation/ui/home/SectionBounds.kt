@@ -6,9 +6,10 @@ internal fun activePortfolioSection(
     items: List<SectionBounds>,
     viewportStart: Int,
     viewportEnd: Int,
+    atStart: Boolean,
     atEnd: Boolean
 ): PortfolioSection {
-    if (items.isEmpty()) return PortfolioSection.ABOUT
+    if (items.isEmpty() || atStart) return PortfolioSection.ABOUT
     if (atEnd && items.any { it.index == PortfolioSection.CONTACT.index }) return PortfolioSection.CONTACT
 
     val viewportHeight = (viewportEnd - viewportStart).coerceAtLeast(1)

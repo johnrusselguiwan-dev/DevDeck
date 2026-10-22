@@ -2,14 +2,11 @@ package com.example.devdeck.presentation.ui.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,21 +19,24 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.BrightnessAuto
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -44,7 +44,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -68,25 +67,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.devdeck.domain.model.SocialLink
+import com.example.devdeck.domain.model.PortfolioResource
 import com.example.devdeck.presentation.common.WindowWidthSizeClass
 import com.example.devdeck.presentation.common.calculateWindowWidthSizeClass
 import com.example.devdeck.presentation.common.theme.DevDeckTheme
 import com.example.devdeck.presentation.common.theme.ThemeMode
 import com.example.devdeck.presentation.ui.components.ContactSection
 import com.example.devdeck.presentation.ui.components.ExperienceTimeline
-import com.example.devdeck.presentation.ui.components.FlowRowLayout
 import com.example.devdeck.presentation.ui.components.HeroHeader
-import com.example.devdeck.presentation.ui.components.IOSMonochromeCard
-import com.example.devdeck.presentation.ui.components.KeyHighlightsBanner
 import com.example.devdeck.presentation.ui.components.ProjectsShowcase
+import com.example.devdeck.presentation.ui.components.ResumeButton
 import com.example.devdeck.presentation.ui.components.SkillsSection
-import com.example.devdeck.presentation.ui.components.getSocialIcon
+import com.example.devdeck.presentation.ui.components.SocialLinksRow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -104,7 +103,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
-    onOpenUrl: (String) -> Unit = {}
+    onOpenUrl: (String) -> Unit = {},
+    onResourceClick: (PortfolioResource) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val themeMode = uiState.themeMode
@@ -117,6 +117,7 @@ fun HomeScreen(
                 items = layout.visibleItemsInfo.map { SectionBounds(it.index, it.offset, it.size) },
                 viewportStart = layout.viewportStartOffset,
                 viewportEnd = layout.viewportEndOffset,
+                atStart = !listState.canScrollBackward,
                 atEnd = !listState.canScrollForward
             )
         }
@@ -167,6 +168,7 @@ fun HomeScreen(
                             state = state,
                             viewModel = viewModel,
                             onOpenUrl = onOpenUrl,
+                            onResourceClick = onResourceClick,
                             themeMode = themeMode,
                             listState = listState,
                             activeSection = activeSection,
@@ -177,6 +179,7 @@ fun HomeScreen(
                             state = state,
                             viewModel = viewModel,
                             onOpenUrl = onOpenUrl,
+                            onResourceClick = onResourceClick,
                             themeMode = themeMode,
                             listState = listState,
                             activeSection = activeSection,
@@ -199,34 +202,49 @@ fun MacOsStyleSplitLayout(
     state: HomeUiState.Success,
     viewModel: HomeViewModel,
     onOpenUrl: (String) -> Unit,
+    onResourceClick: (PortfolioResource) -> Unit,
     themeMode: ThemeMode,
     listState: LazyListState,
     activeSection: PortfolioSection,
     onSectionSelected: (PortfolioSection) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val contactIsVisible by remember(listState) {
+        derivedStateOf {
+            val layout = listState.layoutInfo
+            layout.visibleItemsInfo.any { item ->
+                item.index == PortfolioSection.CONTACT.index &&
+                    item.offset < layout.viewportEndOffset &&
+                    item.offset + item.size > layout.viewportStartOffset
+            }
+        }
+    }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.safeDrawing
     ) { innerPadding ->
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding),
             contentAlignment = Alignment.Center
         ) {
+            val sidebarWidth = when {
+                maxWidth >= 1200.dp -> 360.dp
+                maxWidth >= 900.dp -> 320.dp
+                else -> 240.dp
+            }
             Row(
                 modifier = Modifier
-                    .widthIn(max = 1280.dp)
+                    .widthIn(max = 1440.dp)
                     .fillMaxSize()
-                    .padding(horizontal = 28.dp, vertical = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(36.dp)
+                    .padding(horizontal = 24.dp, vertical = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(28.dp)
             ) {
-                // ── macOS Sidebar Pane (Fixed ~38% Width, Scrollable if short) ──
                 Surface(
                     modifier = Modifier
-                        .weight(0.38f)
+                        .width(sidebarWidth)
                         .fillMaxHeight(),
                     shape = RoundedCornerShape(24.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
@@ -251,7 +269,7 @@ fun MacOsStyleSplitLayout(
                                 Text(
                                     text = "DevDeck",
                                     style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.ExtraBold,
+                                    fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
 
@@ -265,8 +283,8 @@ fun MacOsStyleSplitLayout(
                             Column {
                                 Text(
                                     text = state.profile.name,
-                                    style = MaterialTheme.typography.displayMedium.copy(fontSize = 32.sp),
-                                    fontWeight = FontWeight.ExtraBold,
+                                    style = MaterialTheme.typography.displayMedium,
+                                    fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
@@ -278,15 +296,18 @@ fun MacOsStyleSplitLayout(
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = state.profile.bio,
+                                    text = "${state.profile.location}\n${state.profile.yearsExperience}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     lineHeight = 22.sp
                                 )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                ResumeButton(
+                                    profile = state.profile,
+                                    onOpenUrl = onOpenUrl,
+                                    onResourceClick = onResourceClick
+                                )
                             }
-
-                            // Status Pill
-                            StatusBadge(text = "Available for opportunities")
 
                             // macOS / iOS Style Sidebar Navigation Menu
                             IOSSidebarNavMenu(
@@ -298,18 +319,17 @@ fun MacOsStyleSplitLayout(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // Social Link Buttons pinned at bottom with FlowRow wrapping
                         SocialLinksRow(
                             socialLinks = state.socialLinks,
-                            onOpenUrl = onOpenUrl
+                            onOpenUrl = onOpenUrl,
+                            visible = !contactIsVisible
                         )
                     }
                 }
 
-                // ── Right Scrollable Feed Pane (~62% Width with Fading Top/Bottom Edges) ──
                 BoxWithConstraints(
                     modifier = Modifier
-                        .weight(0.62f)
+                        .weight(1f)
                         .fillMaxHeight()
                 ) {
                     val windowSizeClass = calculateWindowWidthSizeClass(maxWidth)
@@ -321,13 +341,7 @@ fun MacOsStyleSplitLayout(
                     ) {
                         // Section 0: About & Key Highlights
                         item(key = PortfolioSection.ABOUT.name) {
-                            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                                AboutSummaryCard(bio = state.profile.bio)
-
-                                KeyHighlightsBanner(
-                                    windowSizeClass = windowSizeClass
-                                )
-                            }
+                            AboutSummaryCard(bio = state.profile.bio)
                         }
 
                         // Section 1: Experience & Career Timeline
@@ -358,9 +372,10 @@ fun MacOsStyleSplitLayout(
                         // Section 4: Contact & Professional Links
                         item(key = PortfolioSection.CONTACT.name) {
                             ContactSection(
+                                profile = state.profile,
                                 socialLinks = state.socialLinks,
                                 onOpenUrl = onOpenUrl,
-                                windowSizeClass = windowSizeClass
+                                onResourceClick = onResourceClick
                             )
                         }
                     }
@@ -375,16 +390,25 @@ private fun AboutSummaryCard(
     bio: String,
     modifier: Modifier = Modifier
 ) {
-    IOSMonochromeCard(
-        modifier = modifier,
-        title = "About & Engineering Focus",
-        subtitle = "Specialized in Production Android & Kotlin Multiplatform"
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Text(
+            text = "Kotlin & Jetpack Compose",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = "Building for Android.",
+            modifier = Modifier.semantics { heading() },
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
         Text(
             text = bio,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
-            lineHeight = 26.sp
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
@@ -399,6 +423,7 @@ fun IosStyleMobileLayout(
     state: HomeUiState.Success,
     viewModel: HomeViewModel,
     onOpenUrl: (String) -> Unit,
+    onResourceClick: (PortfolioResource) -> Unit,
     themeMode: ThemeMode,
     listState: LazyListState,
     activeSection: PortfolioSection,
@@ -414,7 +439,7 @@ fun IosStyleMobileLayout(
                     Text(
                         text = "DevDeck",
                         style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 },
@@ -487,17 +512,12 @@ fun IosStyleMobileLayout(
                 verticalArrangement = Arrangement.spacedBy(28.dp)
             ) {
                 item(key = PortfolioSection.ABOUT.name) {
-                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                        HeroHeader(
-                            profile = state.profile,
-                            socialLinks = state.socialLinks,
-                            onOpenUrl = onOpenUrl,
-                            windowSizeClass = WindowWidthSizeClass.COMPACT
-                        )
-                        KeyHighlightsBanner(
-                            windowSizeClass = WindowWidthSizeClass.COMPACT
-                        )
-                    }
+                    HeroHeader(
+                        profile = state.profile,
+                        socialLinks = state.socialLinks,
+                        onOpenUrl = onOpenUrl,
+                        onResourceClick = onResourceClick
+                    )
                 }
 
                 item(key = PortfolioSection.EXPERIENCE.name) {
@@ -524,9 +544,10 @@ fun IosStyleMobileLayout(
 
                 item(key = PortfolioSection.CONTACT.name) {
                     ContactSection(
+                        profile = state.profile,
                         socialLinks = state.socialLinks,
                         onOpenUrl = onOpenUrl,
-                        windowSizeClass = WindowWidthSizeClass.COMPACT
+                        onResourceClick = onResourceClick
                     )
                 }
             }
@@ -556,7 +577,7 @@ fun IOSSidebarNavMenu(
             val isSelected = activeSection == section
 
             val bgColor by animateColorAsState(
-                targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface.copy(alpha = 0.4f),
+                targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
                 animationSpec = tween(durationMillis = 250)
             )
             val fgColor by animateColorAsState(
@@ -569,7 +590,7 @@ fun IOSSidebarNavMenu(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
                     .selectable(selected = isSelected, role = Role.Tab) { onSectionSelected(section) },
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(12.dp),
                 color = bgColor
             ) {
                 Row(
@@ -592,143 +613,39 @@ fun IOSSidebarNavMenu(
 // ─── Sub-components ───
 
 @Composable
-private fun StatusBadge(
-    text: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.primaryContainer,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(8.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary)
-            )
-            Text(
-                text = text,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun SocialLinksRow(
-    socialLinks: List<SocialLink>,
-    onOpenUrl: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    FlowRowLayout(
-        modifier = modifier.fillMaxWidth(),
-        horizontalSpacing = 10.dp,
-        verticalSpacing = 8.dp
-    ) {
-        socialLinks.forEach { link ->
-            val icon = getSocialIcon(link.platform)
-
-            Surface(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { onOpenUrl(link.url) },
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surface,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(16.dp)
-                    )
-
-                    Text(
-                        text = link.platform,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun ThemeDropdownButton(
     currentTheme: ThemeMode,
     onThemeSelected: (ThemeMode) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-
     Box(modifier = modifier) {
-        IconButton(onClick = { expanded = true }) {
+        IconButton(onClick = { expanded = !expanded }) {
             Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Theme Options",
+                imageVector = themeIcon(currentTheme),
+                contentDescription = "Appearance: ${currentTheme.displayName}",
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        text = "Appearance",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                },
-                onClick = {},
-                enabled = false
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
-
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-
             ThemeMode.entries.forEach { mode ->
                 DropdownMenuItem(
-                    text = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = mode.displayName,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (mode == currentTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                                fontWeight = if (mode == currentTheme) FontWeight.Bold else FontWeight.Normal
-                            )
-                            if (mode == currentTheme) {
-                                Text(
-                                    text = "✓",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                    text = { Text(mode.displayName) },
+                    leadingIcon = { Icon(themeIcon(mode), contentDescription = null) },
+                    trailingIcon = {
+                        if (mode == currentTheme) {
+                            Icon(Icons.Default.Check, contentDescription = "Selected")
                         }
                     },
                     onClick = {
@@ -739,4 +656,10 @@ private fun ThemeDropdownButton(
             }
         }
     }
+}
+
+private fun themeIcon(mode: ThemeMode): ImageVector = when (mode) {
+    ThemeMode.SYSTEM -> Icons.Default.BrightnessAuto
+    ThemeMode.LIGHT -> Icons.Default.LightMode
+    ThemeMode.DARK -> Icons.Default.DarkMode
 }

@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.devdeck.domain.model.Experience
@@ -42,7 +44,8 @@ fun ExperienceTimeline(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Experience & Career Timeline",
+            text = "Experience & Education",
+            modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -50,14 +53,9 @@ fun ExperienceTimeline(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(0.dp)
-        ) {
-            experiences.forEachIndexed { index, exp ->
-                ExperienceTimelineItem(
-                    experience = exp,
-                    isLast = index == experiences.lastIndex
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(0.dp)) {
+            experiences.forEachIndexed { index, experience ->
+                ExperienceTimelineItem(experience = experience, isLast = index == experiences.lastIndex)
             }
         }
     }
@@ -139,21 +137,22 @@ private fun ExperienceCardContent(
                         .weight(1f)
                         .padding(end = 8.dp)
                 )
-
-                if (experience.isCurrent) {
-                    TechBadge(text = "CURRENT ROLE")
-                }
             }
 
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "${experience.company} • ${experience.period}",
+                text = experience.company,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary
             )
 
+            Text(
+                text = experience.period,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
             Text(
@@ -185,7 +184,6 @@ private fun ExperienceCardContent(
             }
         }
 
-        // Bottom section: Anchored Tech Stack Pills
         Column {
             Spacer(modifier = Modifier.height(16.dp))
 

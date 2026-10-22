@@ -1,27 +1,19 @@
 package com.example.devdeck.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Build
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -29,10 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.example.devdeck.domain.model.Skill
 import com.example.devdeck.domain.model.SkillCategory
 
-/**
- * Modern, Apple/Stripe-inspired Grouped Skills Section using vector icons.
- */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SkillsSection(
     skills: List<Skill>,
@@ -45,15 +33,12 @@ fun SkillsSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = "Technical Competencies & Skills",
+            text = "Skills",
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Spacer(modifier = Modifier.height(12.dp))
         FlowRowLayout(horizontalSpacing = 8.dp, verticalSpacing = 4.dp) {
             FilterChip(
                 selected = selectedCategory == null,
@@ -68,70 +53,63 @@ fun SkillsSection(
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        IOSMonochromeCard(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                categories.forEachIndexed { index, category ->
-                    val categorySkills = groupedSkills[category] ?: emptyList()
-                    val categoryIcon: ImageVector = when (category) {
-                        SkillCategory.MOBILE_DEV -> Icons.Default.Phone
-                        SkillCategory.CROSS_PLATFORM -> Icons.Default.Share
-                        SkillCategory.ARCHITECTURE -> Icons.AutoMirrored.Filled.List
-                        SkillCategory.DEVOPS -> Icons.Default.Build
-                    }
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        FlowRowLayout(horizontalSpacing = 12.dp, verticalSpacing = 8.dp) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Spacer(modifier = Modifier.height(16.dp))
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val columns = if (maxWidth >= 720.dp && categories.size > 1) 2 else 1
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                categories.chunked(columns).forEach { rowCategories ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                        rowCategories.forEach { category ->
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Icon(
-                                    imageVector = categoryIcon,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(20.dp)
-                                )
                                 Text(
                                     text = category.displayName,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurface
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(start = 16.dp)
                                 )
-                            }
-
-                            TechBadge(text = "${categorySkills.size} Competencies")
-                        }
-
-                        // Flow Row of Skill Badges
-                        FlowRowLayout(
-                            horizontalSpacing = 8.dp,
-                            verticalSpacing = 8.dp
-                        ) {
-                            categorySkills.forEach { skill ->
-                                TechBadge(text = skill.name)
+                                IOSMonochromeCard {
+                                    val categorySkills = groupedSkills[category].orEmpty()
+                                    categorySkills.forEachIndexed { index, skill ->
+                                        SkillRow(skill = skill)
+                                        if (index < categorySkills.lastIndex) {
+                                            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
-
-                    if (index < categories.lastIndex) {
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f),
-                            thickness = 1.dp
-                        )
+                        if (rowCategories.size < columns) Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SkillRow(skill: Skill) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(
+            text = skill.name,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = skill.specialty,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Text(
+            text = skill.description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
