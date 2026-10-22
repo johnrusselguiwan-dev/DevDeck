@@ -18,12 +18,17 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 node_modules/
 
-# Graphify machine-local caches and query history
-graphify-out/cache/
-graphify-out/.graphify_python
-graphify-out/.graphify_root
-graphify-out/.rebuild.lock
-graphify-out/query-log.jsonl
+# Local AI tooling and generated project notes
+/.agents/
+/graphify-out/
+/AGENTS.md
+/GEMINI.md
+/CODEX_MODEL_AND_TOKEN_EFFICIENCY.md
+/ARCHITECTURE_PLANNING_BRIEF.md
+/LOCAL_CONTENT_*.md
+/RELEASE_READINESS.md
+/PROJECT_CONTEXT.md
+/docs/MOBILE_DEVELOPER_APPLICATION_REVIEW.md
 
 # Local signing credentials and generated release artifacts
 secret.properties
