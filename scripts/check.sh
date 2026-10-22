@@ -35,19 +35,13 @@ done
 
 variants=(DevDebug)
 if "$all_variants"; then
-  variants+=(DevRelease ProdDebug ProdRelease)
+  variants+=(ProdDebug)
 fi
 
 gradle_tasks=(:androidApp:detekt :shared:detekt :shared:lintDebug :shared:testDebugUnitTest)
 for variant in "${variants[@]}"; do
-  gradle_tasks+=(":androidApp:lint${variant}" ":androidApp:assemble${variant}")
-  if [[ "$variant" == *Debug ]]; then
-    gradle_tasks+=(":androidApp:test${variant}UnitTest")
-  fi
+  gradle_tasks+=(":androidApp:lint${variant}" ":androidApp:assemble${variant}" ":androidApp:test${variant}UnitTest")
 done
-if "$all_variants"; then
-  gradle_tasks+=(:shared:lintRelease)
-fi
 if "$browser"; then
   gradle_tasks+=(:shared:wasmJsBrowserTest :shared:wasmJsBrowserDistribution)
 fi
@@ -64,7 +58,14 @@ check_status=0
 if "$browser"; then
   node --test scripts/analytics.test.mjs scripts/portfolio-overview.test.mjs || check_status=1
 fi
-"$gradle_wrapper" "${gradle_tasks[@]}" --max-workers=1 --continue "$@" || check_status=1
+"$gradle_wrapper" "${gradle_tasks[@]}" --max-workers=1 --continue "$@" --no-daemon || check_status=1
+if "$all_variants"; then
+  release_tasks=(:shared:lintRelease)
+  for variant in DevRelease ProdRelease; do
+    release_tasks+=(":androidApp:lint${variant}" ":androidApp:assemble${variant}")
+  done
+  "$gradle_wrapper" "${release_tasks[@]}" --max-workers=1 --continue "$@" --no-daemon || check_status=1
+fi
 if ((check_status != 0)); then
   exit "$check_status"
 fi

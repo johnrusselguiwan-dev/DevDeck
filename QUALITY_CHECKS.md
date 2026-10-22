@@ -22,15 +22,16 @@ those tasks also cover future flavor-specific debug tests.
 (including a packaged JSON read), and Node.js tests for analytics privacy/dispatch
 and the generated HTML portfolio's content, resource links and escaping.
 It requires Chrome or `CHROME_BIN` and Node.js 20 or later. The script collects
-analytics and Gradle failures and exits nonzero if either fails. One Gradle
+analytics and Gradle failures and exits nonzero if either fails. Each Gradle
 invocation uses `--continue` to collect independent task failures. Additional
 Gradle arguments can follow `--`, for example `-- --no-daemon --console=plain`.
 iOS checks require macOS/Xcode and are explicitly selected with `--ios`.
 
-The gate defaults to one Gradle worker. In the combined debug/release run, AGP
-9.0.1 lint crashed inside `KotlinUastLanguagePlugin.isJvmOrCommonElement` while
-analyzing the shared Android source; isolated release lint passed. Serializing
-the gate avoids overlapping lint analysis without disabling rules or variants.
+The gate uses one Gradle worker and fresh Gradle processes for debug/web and
+release checks. AGP 9.0.1 lint can crash inside
+`KotlinUastLanguagePlugin.isJvmOrCommonElement` when shared debug and release
+analysis run in the same process, even with one worker. Separate invocations
+keep both build types checked without disabling lint rules or variants.
 
 Lint errors fail builds, including `HardcodedText` and `ResourceAsColor`; test
 sources remain excluded from lint. Both Android modules produce HTML, XML and
