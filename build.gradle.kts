@@ -18,17 +18,12 @@ subprojects {
         config.setFrom(rootProject.file("config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
         parallel = false
-        source.setFrom(
-            files(
-                "src/main/java",
-                "src/main/kotlin",
-                "src/commonMain/kotlin",
-                "src/androidMain/kotlin",
-                "src/iosMain/kotlin",
-                "src/wasmJsMain/kotlin",
-                "src/commonTest/kotlin"
-            )
-        )
+        baseline = rootProject.file("config/detekt/baseline-${project.name}.xml")
+        source.setFrom(fileTree("src") {
+            include("**/*.kt", "**/*.kts")
+            exclude("**/build/**", "**/generated/**")
+        })
+        basePath = rootProject.projectDir.absolutePath
     }
 
     dependencies {

@@ -106,6 +106,9 @@ android {
         ignoreTestSources = true
         error += listOf("HardcodedText", "ResourceAsColor")
         disable += listOf("QueryAllPackagesPermission")
+        htmlReport = true
+        xmlReport = true
+        sarifReport = true
     }
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()

@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:ExperienceTimeline.kt$(if (experience.isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)</ID>
+    <ID>ArgumentListWrapping:HomeScreen.kt$(alpha = 0.4f)</ID>
+    <ID>Filename:WindowSizeClass.kt$com.example.devdeck.presentation.common.WindowSizeClass.kt</ID>
+    <ID>Filename:main.kt$com.example.devdeck.main.kt</ID>
+    <ID>FinalNewline:App.kt$com.example.devdeck.App.kt</ID>
+    <ID>FinalNewline:Greeting.kt$com.example.devdeck.Greeting.kt</ID>
+    <ID>FinalNewline:GreetingUtil.kt$com.example.devdeck.GreetingUtil.kt</ID>
+    <ID>FinalNewline:Platform.android.kt$com.example.devdeck.Platform.android.kt</ID>
+    <ID>FinalNewline:Platform.ios.kt$com.example.devdeck.Platform.ios.kt</ID>
+    <ID>FinalNewline:Platform.kt$com.example.devdeck.Platform.kt</ID>
+    <ID>FunctionNaming:MainViewController.kt$@OptIn(ExperimentalForeignApi::class) fun MainViewController()</ID>
+    <ID>MatchingDeclarationName:KeyHighlightsBanner.kt$HighlightItem</ID>
+    <ID>MatchingDeclarationName:Platform.android.kt$AndroidPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:Platform.ios.kt$IOSPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:Platform.wasmJs.kt$WasmPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:Theme.kt$ThemeMode</ID>
+    <ID>MatchingDeclarationName:WindowSizeClass.kt$WindowWidthSizeClass</ID>
+    <ID>MaxLineLength:ExperienceTimeline.kt$.</ID>
+    <ID>MaxLineLength:HeroHeader.kt$text = "6 months startup experience building multi-module Android &amp; KMP apps deployed to production."</ID>
+    <ID>MaxLineLength:HomeScreen.kt$color = if (mode == currentTheme) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface</ID>
+    <ID>MaxLineLength:HomeScreen.kt$targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)</ID>
+    <ID>MaxLineLength:HomeScreen.kt$targetValue = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaxLineLength:HomeScreen.kt$tint = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant</ID>
+    <ID>MaximumLineLength:ExperienceTimeline.kt$ </ID>
+    <ID>MaximumLineLength:HeroHeader.kt$ </ID>
+    <ID>MaximumLineLength:HomeScreen.kt$ </ID>
+    <ID>NoConsecutiveBlankLines:Color.kt$ </ID>
+    <ID>NoMultipleSpaces:Color.kt$ </ID>
+    <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.COMPACT$ </ID>
+    <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.EXPANDED$ </ID>
+    <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.MEDIUM$ </ID>
+    <ID>NoTrailingSpaces:Color.kt$ </ID>
+    <ID>NoUnusedImports:HomeScreen.kt$com.example.devdeck.presentation.ui.home.HomeScreen.kt</ID>
+    <ID>PrintStackTrace:main.kt$e</ID>
+    <ID>SpacingAroundColon:Platform.ios.kt$IOSPlatform$:</ID>
+    <ID>SpacingAroundColon:Platform.wasmJs.kt$WasmPlatform$:</ID>
+    <ID>UnusedImports:HomeScreen.kt$import androidx.compose.ui.graphics.Color</ID>
+    <ID>UnusedImports:HomeScreen.kt$import androidx.compose.ui.unit.Dp</ID>
+    <ID>UnusedParameter:ExperienceTimeline.kt$windowSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.COMPACT</ID>
+    <ID>UnusedParameter:KeyHighlightsBanner.kt$windowSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.COMPACT</ID>
+  </CurrentIssues>
+</SmellBaseline>
