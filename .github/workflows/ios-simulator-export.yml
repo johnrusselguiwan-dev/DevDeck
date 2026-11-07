@@ -1,0 +1,45 @@
+name: Export iOS simulator for Appetize
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: macos-15
+    timeout-minutes: 40
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2g
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+      - name: Build ARM64 simulator framework
+        run: |
+          test "$(uname -m)" = arm64
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64 --max-workers=1 --no-daemon --console=plain
+      - name: Build iOS simulator app without signing
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/devdeck-ios" CODE_SIGNING_ALLOWED=NO build
+      - name: Package Appetize ZIP
+        run: |
+          app="$RUNNER_TEMP/devdeck-ios/Build/Products/Debug-iphonesimulator/DevDeck.app"
+          test -d "$app"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleSupportedPlatforms:0' "$app/Info.plist")" = iPhoneSimulator
+          executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app/Info.plist")
+          lipo -verify_arch arm64 "$app/$executable"
+          ditto -c -k --sequesterRsrc --keepParent "$app" "$RUNNER_TEMP/DevDeck-ios-simulator.zip"
+      - name: Upload Appetize ZIP
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: DevDeck-Appetize
+          path: ${{ runner.temp }}/DevDeck-ios-simulator.zip
+          if-no-files-found: error
+          retention-days: 14
