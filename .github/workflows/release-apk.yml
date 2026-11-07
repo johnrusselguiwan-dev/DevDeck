@@ -1,0 +1,87 @@
+name: Package signed Android release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-apk-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: release
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+      - name: Configure signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
+        run: |
+          python3 - <<'PY'
+          import base64, os
+          from pathlib import Path
+          required = ('KEYSTORE_BASE64', 'STORE_PASSWORD', 'KEY_ALIAS', 'KEY_PASSWORD')
+          missing = [key for key in required if not os.environ.get(key)]
+          if missing:
+              raise SystemExit('Missing release credentials: ' + ', '.join(missing))
+          keystore = Path(os.environ['RUNNER_TEMP']) / 'devdeck-release.jks'
+          keystore.write_bytes(base64.b64decode(os.environ['KEYSTORE_BASE64'], validate=True))
+          keystore.chmod(0o600)
+          values = {
+              'RELEASE_STORE_FILE': str(keystore),
+              'RELEASE_STORE_PASSWORD': os.environ['STORE_PASSWORD'],
+              'RELEASE_KEY_ALIAS': os.environ['KEY_ALIAS'],
+              'RELEASE_KEY_PASSWORD': os.environ['KEY_PASSWORD'],
+          }
+          def escape(value):
+              encoded = value.encode('utf-16-be')
+              return ''.join('\\u' + encoded[index:index + 2].hex() for index in range(0, len(encoded), 2))
+          config = Path('secret.properties')
+          config.write_text(''.join(key + '=' + escape(value) + '\n' for key, value in values.items()), encoding='ascii')
+          config.chmod(0o600)
+          PY
+      - name: Test, lint and build signed production APK
+        run: |
+          python3 -m unittest discover -s scripts/tests -v
+          ./gradlew :shared:testAndroidHostTest :shared:lintAndroidMain :shared:detekt :androidApp:detekt :androidApp:lintProdRelease :androidApp:assembleProdRelease -PrequireReleaseSigning=true --max-workers=1 --no-daemon --console=plain
+      - name: Package and verify release
+        run: |
+          apk=$(python3 scripts/package-release.py androidApp/build/outputs/apk/prod/release/output-metadata.json version.properties release-artifacts)
+          signer=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -n 1)
+          "$signer" verify --print-certs "$apk"
+          analyzer="$ANDROID_HOME/cmdline-tools/latest/bin/apkanalyzer"
+          actual_identity=$("$analyzer" apk summary "$apk")
+          read -r actual_package actual_code actual_version <<< "$actual_identity"
+          actual_identity="$actual_package $actual_code $actual_version"
+          expected_identity=$(python3 - <<'PY'
+          from pathlib import Path
+          values = dict(line.split('=', 1) for line in Path('version.properties').read_text().splitlines() if line and not line.startswith('#'))
+          print('com.example.devdeck', values['VERSION_CODE'], values['VERSION_NAME'])
+          PY
+          )
+          test "$actual_identity" = "$expected_identity"
+          test "$("$analyzer" manifest debuggable "$apk")" = false
+          (cd release-artifacts && sha256sum --check *.sha256)
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: DevDeck-prod-release-${{ github.run_number }}
+          path: release-artifacts/*
+          if-no-files-found: error
+          retention-days: 14
+      - name: Remove signing files
+        if: always()
+        run: rm -f secret.properties "$RUNNER_TEMP/devdeck-release.jks"

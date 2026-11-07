@@ -7,6 +7,16 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
 }
 
+val versionProperties = Properties().apply {
+    rootProject.file("version.properties").inputStream().use { load(it) }
+}
+val appVersionCode = versionProperties.getProperty("VERSION_CODE")?.toIntOrNull()
+    ?.takeIf { it > 0 } ?: error("VERSION_CODE must be a positive integer in version.properties")
+val appVersionName = versionProperties.getProperty("VERSION_NAME")
+    ?.takeIf { it.matches(Regex("[A-Za-z0-9][A-Za-z0-9._-]*")) }
+    ?: error("VERSION_NAME must be filename-safe in version.properties")
+val requireReleaseSigning = providers.gradleProperty("requireReleaseSigning").map(String::toBoolean).orElse(false)
+
 val releaseSigningFile = rootProject.file("secret.properties")
 val releaseSigningProperties = Properties().apply {
     if (releaseSigningFile.isFile) {
@@ -45,8 +55,8 @@ android {
         applicationId = "com.example.devdeck"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
     }
     flavorDimensions += "env"
     productFlavors {
@@ -98,4 +108,16 @@ kotlin {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
     }
+}
+
+val validateReleaseSigning by tasks.registering {
+    val configured = releaseSigningFile.isFile
+    doLast {
+        check(configured) { "Signed release packaging requires secret.properties" }
+    }
+}
+
+if (requireReleaseSigning.get()) {
+    tasks.matching { it.name in setOf("assembleProdRelease", "bundleProdRelease", "packageProdRelease") }
+        .configureEach { dependsOn(validateReleaseSigning) }
 }
