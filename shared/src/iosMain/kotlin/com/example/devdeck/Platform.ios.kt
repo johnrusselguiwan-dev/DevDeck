@@ -9,6 +9,7 @@ import platform.Foundation.NSUserDefaults
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIDevice
+import platform.UIKit.popoverPresentationController
 
 class IOSPlatform: Platform {
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
