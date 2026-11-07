@@ -6,9 +6,6 @@
     <ID>ArgumentListWrapping:HomeScreen.kt$(alpha = 0.4f)</ID>
     <ID>Filename:WindowSizeClass.kt$com.example.devdeck.presentation.common.WindowSizeClass.kt</ID>
     <ID>Filename:main.kt$com.example.devdeck.main.kt</ID>
-    <ID>FinalNewline:App.kt$com.example.devdeck.App.kt</ID>
-    <ID>FinalNewline:Greeting.kt$com.example.devdeck.Greeting.kt</ID>
-    <ID>FinalNewline:GreetingUtil.kt$com.example.devdeck.GreetingUtil.kt</ID>
     <ID>FinalNewline:Platform.android.kt$com.example.devdeck.Platform.android.kt</ID>
     <ID>FinalNewline:Platform.ios.kt$com.example.devdeck.Platform.ios.kt</ID>
     <ID>FinalNewline:Platform.kt$com.example.devdeck.Platform.kt</ID>
@@ -35,7 +32,6 @@
     <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.MEDIUM$ </ID>
     <ID>NoTrailingSpaces:Color.kt$ </ID>
     <ID>NoUnusedImports:HomeScreen.kt$com.example.devdeck.presentation.ui.home.HomeScreen.kt</ID>
-    <ID>PrintStackTrace:main.kt$e</ID>
     <ID>SpacingAroundColon:Platform.ios.kt$IOSPlatform$:</ID>
     <ID>SpacingAroundColon:Platform.wasmJs.kt$WasmPlatform$:</ID>
     <ID>UnusedImports:HomeScreen.kt$import androidx.compose.ui.graphics.Color</ID>

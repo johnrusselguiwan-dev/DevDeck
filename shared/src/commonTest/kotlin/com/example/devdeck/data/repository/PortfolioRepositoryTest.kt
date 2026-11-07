@@ -1,9 +1,9 @@
 package com.example.devdeck.data.repository
 
+import com.example.devdeck.ThemePreferences
 import com.example.devdeck.data.BundledPortfolioLoader
 import com.example.devdeck.di.appModule
 import com.example.devdeck.domain.repository.PortfolioRepository
-import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
 import com.example.devdeck.testPortfolio
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -33,8 +33,8 @@ class PortfolioRepositoryTest {
             reads++
             Json.encodeToString(if (reads == 1) first else second).encodeToByteArray()
         }
-        val useCase = GetPortfolioDataUseCase(PortfolioRepositoryImpl(loader))
-        val snapshots = useCase()
+        val repository = PortfolioRepositoryImpl(loader)
+        val snapshots = repository.getPortfolioData()
         assertEquals(0, reads)
         assertEquals(listOf(first), snapshots.toList())
         assertEquals(1, reads)
@@ -43,10 +43,10 @@ class PortfolioRepositoryTest {
     }
 
     @Test
-    fun resourceFailuresPropagateThroughTheUseCase() = runTest {
+    fun resourceFailuresPropagateThroughTheRepository() = runTest {
         val failure = IllegalStateException("Resource unavailable")
         val repository = PortfolioRepositoryImpl(BundledPortfolioLoader { throw failure })
-        val caught = assertFailsWith<IllegalStateException> { GetPortfolioDataUseCase(repository)().first() }
+        val caught = assertFailsWith<IllegalStateException> { repository.getPortfolioData().first() }
         assertSame(failure, caught)
     }
 
@@ -55,7 +55,7 @@ class PortfolioRepositoryTest {
         val repository = PortfolioRepositoryImpl(BundledPortfolioLoader { "{".encodeToByteArray() })
         val emissions = mutableListOf<Any>()
         assertFailsWith<SerializationException> {
-            GetPortfolioDataUseCase(repository)().collect { emissions += it }
+            repository.getPortfolioData().collect { emissions += it }
         }
         assertTrue(emissions.isEmpty())
     }
@@ -73,7 +73,7 @@ class PortfolioRepositoryTest {
             }
         }
         val repository = PortfolioRepositoryImpl(loader)
-        val result = async { GetPortfolioDataUseCase(repository)().first() }
+        val result = async { repository.getPortfolioData().first() }
         started.await()
         result.cancel()
         assertFailsWith<CancellationException> { result.await() }
@@ -88,13 +88,12 @@ class PortfolioRepositoryTest {
             Json.encodeToString(testPortfolio()).encodeToByteArray()
         }
         val application = koinApplication {
-            modules(appModule, module { single { loader } })
+            modules(appModule(ThemePreferences()), module { single { loader } })
         }
         try {
             val repository = application.koin.get<PortfolioRepository>()
-            val useCase = application.koin.get<GetPortfolioDataUseCase>()
             assertEquals(0, reads)
-            assertEquals(testPortfolio(), useCase().first())
+            assertEquals(testPortfolio(), repository.getPortfolioData().first())
             assertSame(repository, application.koin.get<PortfolioRepository>())
             assertEquals(1, reads)
         } finally {

@@ -2,8 +2,9 @@ package com.example.devdeck.presentation.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.devdeck.ThemePreferences
 import com.example.devdeck.domain.model.SkillCategory
-import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
+import com.example.devdeck.domain.repository.PortfolioRepository
 import com.example.devdeck.presentation.common.theme.ThemeMode
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val getPortfolioDataUseCase: GetPortfolioDataUseCase
+    private val repository: PortfolioRepository,
+    private val themePreferences: ThemePreferences
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading())
+    private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading(themePreferences.load()))
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
     private var loadingJob: Job? = null
     private var selectedSkillCategory: SkillCategory? = null
@@ -30,7 +32,7 @@ class HomeViewModel(
     fun loadPortfolioData() {
         loadingJob?.cancel()
         loadingJob = viewModelScope.launch {
-            getPortfolioDataUseCase()
+            repository.getPortfolioData()
                 .onStart {
                     _uiState.update { current ->
                         if (current is HomeUiState.Success) current else HomeUiState.Loading(current.themeMode)
@@ -69,6 +71,7 @@ class HomeViewModel(
     }
 
     fun setThemeMode(mode: ThemeMode) {
+        themePreferences.save(mode)
         _uiState.update { currentState ->
             when (currentState) {
                 is HomeUiState.Success -> currentState.copy(themeMode = mode)

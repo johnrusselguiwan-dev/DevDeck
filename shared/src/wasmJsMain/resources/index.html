@@ -40,12 +40,27 @@
             html, body { background: #fafafa; }
             nav { background: #f4f4f5; color: #27272a; }
         }
-        #spinner {
-            position: fixed;
+        html[data-theme="LIGHT"], html[data-theme="LIGHT"] body { background: #fafafa; }
+        html[data-theme="LIGHT"] nav { background: #f4f4f5; color: #27272a; }
+        html[data-theme="DARK"], html[data-theme="DARK"] body { background: #09090b; }
+        html[data-theme="DARK"] nav { background: #18181b; color: #f4f4f5; }
+        #bootstrap-status {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            width: min(85%, 32rem);
+            text-align: center;
+            color: #fafafa;
+            font: 16px/1.5 system-ui, sans-serif;
         }
+        #bootstrap-status a { color: inherit; text-underline-offset: 4px; }
+        #bootstrap-status a + a { margin-left: 24px; }
+        @media (prefers-color-scheme: light) {
+            #bootstrap-status { color: #27272a; }
+        }
+        html[data-theme="LIGHT"] #bootstrap-status { color: #27272a; }
+        html[data-theme="DARK"] #bootstrap-status { color: #fafafa; }
     </style>
 </head>
 <body>
@@ -55,6 +70,7 @@
         <a href="mailto:russelguiwan@gmail.com">Email</a>
     </nav>
     <div id="portfolio-app">
+    <div id="bootstrap-status" role="status">
     <div id="spinner">
         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 50 50" role="presentation">
             <circle cx="25" cy="25" r="20" stroke="#333" stroke-width="4" fill="none"/>
@@ -65,8 +81,13 @@
             </circle>
         </svg>
     </div>
+    <p id="bootstrap-message">Loading the interactive portfolio…</p>
+    <p><a href="overview.html">Read text version</a><a href="index.html">Retry</a></p>
+    </div>
     <noscript>Open the <a href="overview.html">portfolio text version</a> to read my experience and projects.</noscript>
     </div>
+    <script src="bootstrap.js"></script>
+    <script src="platform.js"></script>
     <script src="analytics.js"></script>
     <script type="application/javascript" src="devdeck.js"></script>
 </body>

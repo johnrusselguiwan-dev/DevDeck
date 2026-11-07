@@ -1,12 +1,13 @@
 package com.example.devdeck.presentation.ui.home
 
 import androidx.lifecycle.ViewModelStore
+import com.example.devdeck.ThemePreferences
 import com.example.devdeck.data.BundledPortfolioLoader
 import com.example.devdeck.data.repository.PortfolioRepositoryImpl
+import com.example.devdeck.di.appModule
 import com.example.devdeck.domain.model.PortfolioData
 import com.example.devdeck.domain.model.SkillCategory
 import com.example.devdeck.domain.repository.PortfolioRepository
-import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
 import com.example.devdeck.presentation.common.theme.ThemeMode
 import com.example.devdeck.testPortfolio
 import kotlinx.coroutines.CompletableDeferred
@@ -23,6 +24,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.koin.dsl.koinApplication
+import org.koin.dsl.module
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -47,7 +50,7 @@ class HomeViewModelTest {
     }
 
     private fun createViewModel(repository: PortfolioRepository): HomeViewModel {
-        return HomeViewModel(GetPortfolioDataUseCase(repository)).also { store.put("home", it) }
+        return HomeViewModel(repository, ThemePreferences()).also { store.put("home", it) }
     }
 
     @Test
@@ -167,6 +170,58 @@ class HomeViewModelTest {
         assertEquals(1, cancelledReads)
         assertEquals(ThemeMode.LIGHT, state.themeMode)
         assertEquals(SkillCategory.CROSS_PLATFORM, state.selectedSkillCategory)
+    }
+
+    @Test
+    fun savedThemeIsLoadedBeforeContentAndSurvivesRecreation() = runTest {
+        var stored: String? = "DARK"
+        val preferences = ThemePreferences(read = { stored }, write = { stored = it })
+        val viewModel = HomeViewModel(TestRepository(), preferences)
+        store.put("home", viewModel)
+        assertEquals(ThemeMode.DARK, viewModel.uiState.value.themeMode)
+        runCurrent()
+        viewModel.setThemeMode(ThemeMode.LIGHT)
+        assertEquals("LIGHT", stored)
+
+        val recreated = HomeViewModel(TestRepository(), preferences)
+        store.put("home", recreated)
+        assertEquals(ThemeMode.LIGHT, recreated.uiState.value.themeMode)
+        runCurrent()
+        assertEquals(ThemeMode.LIGHT, recreated.uiState.value.themeMode)
+    }
+
+    @Test
+    fun invalidOrUnavailableStorageDefaultsToSystemWithoutBreakingThemeChanges() = runTest {
+        assertEquals(ThemeMode.SYSTEM, ThemePreferences(read = { "unknown" }).load())
+        val preferences = ThemePreferences(
+            read = { error("Storage blocked") },
+            write = { error("Storage full") }
+        )
+        val viewModel = HomeViewModel(TestRepository(), preferences)
+        store.put("home", viewModel)
+        assertEquals(ThemeMode.SYSTEM, viewModel.uiState.value.themeMode)
+        viewModel.setThemeMode(ThemeMode.DARK)
+        runCurrent()
+        assertEquals(ThemeMode.DARK, viewModel.uiState.value.themeMode)
+    }
+
+    @Test
+    fun productionModuleInjectsExplicitPreferencesWithoutRuntimeParameters() = runTest {
+        var stored: String? = "DARK"
+        val preferences = ThemePreferences(read = { stored }, write = { stored = it })
+        val application = koinApplication {
+            modules(appModule(preferences), module { single<PortfolioRepository> { TestRepository() } })
+        }
+        try {
+            val viewModel = application.koin.get<HomeViewModel>()
+            store.put("home", viewModel)
+            assertEquals(ThemeMode.DARK, viewModel.uiState.value.themeMode)
+            viewModel.setThemeMode(ThemeMode.LIGHT)
+            assertEquals("LIGHT", stored)
+            runCurrent()
+        } finally {
+            application.close()
+        }
     }
 
     private class TestRepository : PortfolioRepository {
