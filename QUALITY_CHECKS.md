@@ -7,40 +7,46 @@ bash scripts/check.sh
 bash scripts/check.sh --all-variants --browser
 bash scripts/check.sh --browser
 bash scripts/check.sh --ios
+bash scripts/check.sh --web-only --quiet
 ```
 
-The default gate runs `devDebug` lint, unit tests and APK assembly, shared debug
-lint/unit tests, and Detekt for both modules. `--all-variants` adds `devRelease`,
-`prodDebug` and `prodRelease` lint/assembly, plus shared release lint and app-host
-unit tests for both debug flavors. The shared library has no environment flavors;
-shared Android tests run once. AGP 9 enables unit tests for the tested build type
-(`debug`) by default; the gate uses those tasks and validates release builds
-through assembly and lint. There are currently no app-host unit test sources;
-those tasks also cover future flavor-specific debug tests.
+The default gate runs Python tooling tests, shared/Android Detekt, shared
+Android-KMP lint and host tests, and `devDebug` app lint/unit tests/APK assembly.
+`--all-variants` adds `prodDebug`, `devRelease` and `prodRelease` lint/assembly;
+app-host unit tests run for both debug flavors. The shared library has a single
+Android variant, so `:shared:testAndroidHostTest` and `:shared:lintAndroidMain`
+run once. Host and device test source sets are explicitly enabled; the full gate compiles
+the device-test APK without requiring a connected device. App-host unit
+test tasks currently have no test sources and also cover future flavor tests.
 
-`--browser` adds the production Wasm distribution, headless Chrome tests
-(including a packaged JSON read), and Node.js tests for analytics privacy/dispatch
-and the generated HTML portfolio's content, resource links and escaping.
-It requires Chrome or `CHROME_BIN` and Node.js 20 or later. The script collects
-analytics and Gradle failures and exits nonzero if either fails. Each Gradle
-invocation uses `--continue` to collect independent task failures. Additional
-Gradle arguments can follow `--`, for example `-- --no-daemon --console=plain`.
-iOS checks require macOS/Xcode and are explicitly selected with `--ios`.
+`--browser` adds the production Wasm distribution, headless Chrome tests and
+Node.js checks for analytics, generated HTML, platform preferences/sharing and
+startup recovery. The Compose smoke test mounts `App` with an unrelated global
+Koin container, uses the real browser preferences bridge to change theme, and
+navigates to Contact. Karma loads the production `platform.js` for this test.
+Chrome/`CHROME_BIN` and Node.js 20+ are required. The script collects independent
+failures and exits nonzero if any check fails. Gradle arguments follow `--`.
 
-The gate uses one Gradle worker and fresh Gradle processes for debug/web and
-release checks. AGP 9.0.1 lint can crash inside
-`KotlinUastLanguagePlugin.isJvmOrCommonElement` when shared debug and release
-analysis run in the same process, even with one worker. Separate invocations
-keep both build types checked without disabling lint rules or variants.
-
-Lint errors fail builds, including `HardcodedText` and `ResourceAsColor`; test
-sources remain excluded from lint. Both Android modules produce HTML, XML and
-SARIF lint reports under `build/reports/`. Release checks use the same gate as
-debug checks. To run only production release lint:
+The gate uses one worker and separate debug/web and release Gradle invocations.
+The shared module uses `com.android.kotlin.multiplatform.library` plus
+`com.android.lint`: the standalone lint plugin is required to create its lint
+verification task. Shared lint must not be replaced with app lint alone.
+App lint keeps dependency analysis enabled. Both modules retain error severities
+for `HardcodedText` and `ResourceAsColor` and generate HTML/XML/SARIF reports.
+Run focused lint with:
 
 ```sh
-./gradlew :androidApp:lintProdRelease :shared:lintRelease
+./gradlew :shared:lintAndroidMain :androidApp:lintProdRelease
 ```
+
+`--quiet` changes output only: complete logs are retained in a temporary file,
+success prints the path, and failures print that path plus the last 60 lines.
+`--web-only` runs the Python/Node checks, shared Detekt, Wasm browser tests and
+production web build without Android tasks. It cannot be combined with
+`--all-variants` or `--ios`. Normal CI remains the full Android/web gate.
+The Python checks also test shell command selection, quiet failure reporting,
+explicit Hosting destination selection and prevention of uploads after failures;
+those routing tests use temporary command stubs and do not deploy.
 
 ## Detekt debt
 
@@ -51,7 +57,7 @@ tests. Generated/build directories are excluded. Reports use repository-relative
 paths for portable CI diagnostics. Analysis uses the existing syntax-based gate
 without platform compilation/type resolution.
 Baseline paths are `config/detekt/baseline-<module>.xml`. The shared baseline
-records 40 unique existing issue signatures. Android currently
+records 36 existing issue signatures after removing four resolved entries for deleted template code, the rewritten app root and removed stack-trace printing. Android currently
 has no baseline findings and needs no baseline file.
 
 The baseline does not fix those issues. Newly introduced issue signatures fail
@@ -69,9 +75,14 @@ report uploads even after failures. Obsolete runs are canceled and the job has a
 30-minute timeout. PR caches are read-only.
 
 All four Android variants build without Firebase or signing secrets. Debug APKs
-use the standard debug key; release APKs are unsigned on CI. The workflow uploads
-quality reports and does not publish APKs or deploy Firebase Hosting. Device and
-iOS checks are separate. Branch protection requiring this check is a separate
+use the standard debug key; release APKs are unsigned on CI. The quality workflow uploads
+reports and does not publish APKs or deploy Firebase Hosting. The separate manual
+`release-apk.yml` workflow packages a signed production APK after verifying its
+signature, identity, version and non-debuggable manifest; it uploads a workflow
+artifact without publishing a GitHub Release. Signing-secret setup is documented
+in `docs/DEVELOPMENT.md`. Android device checks are separate. An additional `macos-15` job compiles the
+shared iOS simulator framework and unsigned Swift host and runs shared simulator
+tests. Local Linux validation cannot establish that job passes. Branch protection requiring this check is a separate
 repository setting. Local validation cannot confirm a GitHub-hosted run;
 check the pull request's quality status before merging.
 
@@ -95,3 +106,34 @@ without Firebase/signing files also built all four variants and produced unsigne
 release APKs. A temporary `devDebug` wildcard-import probe failed Detekt as
 expected and was removed. Actionlint, shell syntax, script option/failure checks,
 and `git diff --check` passed. Hosted Actions and iOS/device runs were not executed.
+
+On 2026-11-04, the saved-theme, sharing and release-tooling changes passed the full
+`--all-variants --browser` gate: 37 shared Android unit tests and 38 Wasm browser
+tests, all four Android APK variants, both shared lint build types, Detekt, the
+production web distribution, Node.js checks and four Python packaging tests.
+The production web bundle includes the theme/share helper before Wasm. The exact
+release-workflow verification step passed locally against the signed production
+APK, checking its signature, application ID/version, non-debuggable manifest and
+checksum; bundled portfolio content matched the current source. A source-only
+copy without credentials passed unsigned release configuration (`--dry-run`),
+and the explicit signing guard failed as expected. This is not an unsigned APK
+assembly check. Skill files were validated locally and remain ignored by Git.
+No Android device was connected; browser UI automation was unavailable. Visual
+checks, native share-sheet runtime checks, iOS compilation/runtime and hosted
+GitHub workflow execution were not performed. No deployment or publication ran.
+
+On 2026-11-05, architecture fixes passed a clean debug/web gate followed by the
+release gate: 38 shared Android host tests, 40 Wasm browser tests (including the
+awaited production-app startup/theme/navigation smoke test), 16 Node.js checks
+and 13 Python tooling tests. All four Android APKs, the Android device-test APK
+and the production web distribution built. Shared Android lint reported no
+issues; all four app lint reports had no errors, with existing target/toolchain
+and dependency update warnings remaining. Both Detekt reports had no findings.
+A temporary API-level violation confirmed shared lint coverage and was removed.
+The first release phase exhausted disk space; after removing confirmed generated
+test bundles and redundant scratch copies, the same release tasks passed.
+The release-workflow packaging, signature, identity/version, non-debuggable
+manifest and checksum checks passed against the newly built production APK.
+Browser helper files matched the production distribution. The macOS iOS job is
+configured but was not run locally; no Android device runtime check, hosted CI,
+deployment or publication was performed.

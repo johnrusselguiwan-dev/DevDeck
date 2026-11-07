@@ -20,6 +20,7 @@ node_modules/
 
 # Local AI tooling and generated project notes
 /.agents/
+/.codex/
 /graphify-out/
 /AGENTS.md
 /GEMINI.md
@@ -55,3 +56,7 @@ GoogleService-Info.plist
 .firebase/
 firebase-debug.log*
 firepit-log.txt
+
+# Locally packaged release downloads
+/release-artifacts/
+__pycache__/
