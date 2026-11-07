@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -251,7 +252,7 @@ private fun OtherProjectCard(project: Project, onOpenUrl: (String) -> Unit, modi
 
 @Composable
 private fun ProjectActions(project: Project, onOpenUrl: (String) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         project.playStoreUrl?.let { playUrl ->
             Button(
                 onClick = { onOpenUrl(playUrl) },
@@ -260,12 +261,11 @@ private fun ProjectActions(project: Project, onOpenUrl: (String) -> Unit) {
                     contentColor = MaterialTheme.colorScheme.surface
                 ),
                 shape = RoundedCornerShape(14.dp),
-                modifier = Modifier.weight(1f).height(48.dp)
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
             ) {
                 Text(
                     text = "Play Store",
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1
+                    fontWeight = FontWeight.SemiBold
                 )
             }
         }
@@ -275,13 +275,12 @@ private fun ProjectActions(project: Project, onOpenUrl: (String) -> Unit) {
                 onClick = { onOpenUrl(gitUrl) },
                 shape = RoundedCornerShape(14.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                modifier = Modifier.weight(1f).height(48.dp)
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
             ) {
                 Text(
                     text = "View source",
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    maxLines = 1
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

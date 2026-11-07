@@ -16,7 +16,7 @@ Android-KMP lint and host tests, and `devDebug` app lint/unit tests/APK assembly
 app-host unit tests run for both debug flavors. The shared library has a single
 Android variant, so `:shared:testAndroidHostTest` and `:shared:lintAndroidMain`
 run once. Host and device test source sets are explicitly enabled; the full gate compiles
-the device-test APK without requiring a connected device. App-host unit
+the shared device-test APK and the app journey-test APK without requiring a connected device. App-host unit
 test tasks currently have no test sources and also cover future flavor tests.
 
 `--browser` adds the production Wasm distribution, headless Chrome tests and
@@ -57,7 +57,7 @@ tests. Generated/build directories are excluded. Reports use repository-relative
 paths for portable CI diagnostics. Analysis uses the existing syntax-based gate
 without platform compilation/type resolution.
 Baseline paths are `config/detekt/baseline-<module>.xml`. The shared baseline
-records 36 existing issue signatures after removing four resolved entries for deleted template code, the rewritten app root and removed stack-trace printing. Android currently
+records 32 existing issue signatures after removing resolved entries for deleted template code, unused UI components, the rewritten app root and unused imports. Android currently
 has no baseline findings and needs no baseline file.
 
 The baseline does not fix those issues. Newly introduced issue signatures fail
@@ -137,3 +137,19 @@ manifest and checksum checks passed against the newly built production APK.
 Browser helper files matched the production distribution. The macOS iOS job is
 configured but was not run locally; no Android device runtime check, hosted CI,
 deployment or publication was performed.
+
+On 2026-11-08, portfolio review fixes removed unused UI and schema fields,
+corrected obsolete comments, made project actions stack with flexible heights,
+and enabled release code/resource shrinking. The full gate compiled all four
+Android variants, the shared device-test APK, the app journey-test APK and the
+production web distribution; lint, 38 shared host tests, 16 Node checks and 13
+Python tests passed. Its browser phase initially failed on a new layout test.
+After correcting the test to check rendered line bounds rather than paragraph
+allocation, the complete 41-test browser suite and both Detekt tasks passed in
+a focused rerun. The earlier Contact navigation test remains covered.
+
+The app journey test exercises theme selection, Contact navigation and activity
+recreation. Run it with `./gradlew :androidApp:connectedDevDebugAndroidTest`.
+It was compiled, not executed: no Android device or configured AVD was available.
+Native visual/share/link checks, optimized-release runtime verification, APK size
+comparison, iOS and hosted CI remain unverified. Nothing was published or deployed.

@@ -10,7 +10,6 @@
     <ID>FinalNewline:Platform.ios.kt$com.example.devdeck.Platform.ios.kt</ID>
     <ID>FinalNewline:Platform.kt$com.example.devdeck.Platform.kt</ID>
     <ID>FunctionNaming:MainViewController.kt$@OptIn(ExperimentalForeignApi::class) fun MainViewController()</ID>
-    <ID>MatchingDeclarationName:KeyHighlightsBanner.kt$HighlightItem</ID>
     <ID>MatchingDeclarationName:Platform.android.kt$AndroidPlatform : Platform</ID>
     <ID>MatchingDeclarationName:Platform.ios.kt$IOSPlatform : Platform</ID>
     <ID>MatchingDeclarationName:Platform.wasmJs.kt$WasmPlatform : Platform</ID>
@@ -31,12 +30,9 @@
     <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.EXPANDED$ </ID>
     <ID>NoMultipleSpaces:WindowSizeClass.kt$WindowWidthSizeClass.MEDIUM$ </ID>
     <ID>NoTrailingSpaces:Color.kt$ </ID>
-    <ID>NoUnusedImports:HomeScreen.kt$com.example.devdeck.presentation.ui.home.HomeScreen.kt</ID>
     <ID>SpacingAroundColon:Platform.ios.kt$IOSPlatform$:</ID>
     <ID>SpacingAroundColon:Platform.wasmJs.kt$WasmPlatform$:</ID>
     <ID>UnusedImports:HomeScreen.kt$import androidx.compose.ui.graphics.Color</ID>
-    <ID>UnusedImports:HomeScreen.kt$import androidx.compose.ui.unit.Dp</ID>
     <ID>UnusedParameter:ExperienceTimeline.kt$windowSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.COMPACT</ID>
-    <ID>UnusedParameter:KeyHighlightsBanner.kt$windowSizeClass: WindowWidthSizeClass = WindowWidthSizeClass.COMPACT</ID>
   </CurrentIssues>
 </SmellBaseline>

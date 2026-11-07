@@ -36,8 +36,6 @@ internal fun validatePortfolio(snapshot: PortfolioData) {
         validateText(bio, "profile.bio")
         validateText(location, "profile.location")
         validateText(yearsExperience, "profile.yearsExperience")
-        require(playStoreAppsCount >= 0) { "profile.playStoreAppsCount must be nonnegative" }
-        validateEntries(coreFocus, "profile.coreFocus")
         resumeUrl?.let { validateUrl(it, "profile.resumeUrl", allowContact = false) }
         androidDownloadUrl?.let { validateUrl(it, "profile.androidDownloadUrl", allowContact = false) }
         websiteUrl?.let { validateUrl(it, "profile.websiteUrl", allowContact = false) }
@@ -73,7 +71,6 @@ internal fun validatePortfolio(snapshot: PortfolioData) {
     snapshot.socialLinks.forEach { link ->
         val path = "socialLinks[${link.id}]"
         validateText(link.platform, "$path.platform")
-        validateText(link.iconIdentifier, "$path.iconIdentifier")
         validateUrl(link.url, "$path.url", allowContact = true)
     }
 }

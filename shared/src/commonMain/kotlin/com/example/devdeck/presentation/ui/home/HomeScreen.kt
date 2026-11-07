@@ -82,7 +82,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -103,16 +102,7 @@ import com.example.devdeck.presentation.ui.components.SocialLinksRow
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-/**
- * iOS/macOS-Inspired Single-Page Portfolio Layout for DevDeck.
- *
- * Employs Cupertino/Apple design aesthetics:
- * - Inset grouped surface containers with soft rounded corners (20dp-24dp)
- * - Translucent frosted top/bottom bars with blur/alpha
- * - Smooth top & bottom fading edges for scrollable feeds
- * - macOS/iPadOS-style sidebar navigation menu with animated selection pills
- * - Adaptive layout switching between Desktop Split-View (macOS style) and Mobile Feed (iOS style)
- */
+/** Shares portfolio state and scroll position across the mobile feed and desktop split layout. */
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -606,10 +596,6 @@ fun IosStyleMobileLayout(
         }
     }
 }
-
-// ─────────────────────────────────────────────────────────
-//  Fading Edges Modifier for Smooth Top & Bottom Scroll Transitions
-// ─────────────────────────────────────────────────────────
 
 // ─────────────────────────────────────────────────────────
 //  iOS/macOS-Style Sidebar Navigation Menu

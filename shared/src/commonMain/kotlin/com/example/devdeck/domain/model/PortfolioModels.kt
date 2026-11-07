@@ -10,8 +10,6 @@ data class DeveloperProfile(
     val bio: String,
     val location: String,
     val yearsExperience: String,
-    val playStoreAppsCount: Int,
-    val coreFocus: List<String>,
     val resumeUrl: String? = null,
     val androidDownloadUrl: String? = null,
     val websiteUrl: String? = null
@@ -72,6 +70,5 @@ data class Project(
 data class SocialLink(
     val id: String,
     val platform: String,
-    val url: String,
-    val iconIdentifier: String
+    val url: String
 )

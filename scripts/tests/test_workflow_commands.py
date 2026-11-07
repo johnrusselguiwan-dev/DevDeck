@@ -106,6 +106,7 @@ done
         result = self.run_script("check.sh", "--all-variants", "--quiet")
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertIn(":shared:assembleAndroidDeviceTest", self.commands())
+        self.assertIn(":androidApp:assembleDevDebugAndroidTest", self.commands())
         self.assertIn(":androidApp:lintProdRelease", self.commands())
 
     def test_web_only_rejects_incompatible_flags(self):
