@@ -22,7 +22,7 @@ while (($#)); do
     --help)
       echo "Usage: bash scripts/check.sh [--all-variants] [--browser] [--ios] [-- Gradle arguments]"
       echo "Default: devDebug lint, assembly, unit tests, and Detekt for both modules."
-      echo "--all-variants adds devRelease, prodDebug, prodRelease, and shared release lint."
+      echo "--all-variants adds devRelease, prodDebug, prodRelease, and shared device-test APK assembly."
       echo "--browser adds web assembly, browser tests, and analytics/text-portfolio tests (Node.js 20+)."
       echo "Browser tests need Chrome/CHROME_BIN; iOS tests need macOS/Xcode."
       exit 0
@@ -38,10 +38,13 @@ if "$all_variants"; then
   variants+=(ProdDebug)
 fi
 
-gradle_tasks=(:androidApp:detekt :shared:detekt :shared:lintDebug :shared:testDebugUnitTest)
+gradle_tasks=(:androidApp:detekt :shared:detekt :shared:lintAndroidMain :shared:testAndroidHostTest)
 for variant in "${variants[@]}"; do
   gradle_tasks+=(":androidApp:lint${variant}" ":androidApp:assemble${variant}" ":androidApp:test${variant}UnitTest")
 done
+if "$all_variants"; then
+  gradle_tasks+=(:shared:assembleAndroidDeviceTest)
+fi
 if "$browser"; then
   gradle_tasks+=(:shared:wasmJsBrowserTest :shared:wasmJsBrowserDistribution)
 fi
@@ -60,7 +63,7 @@ if "$browser"; then
 fi
 "$gradle_wrapper" "${gradle_tasks[@]}" --max-workers=1 --continue "$@" --no-daemon || check_status=1
 if "$all_variants"; then
-  release_tasks=(:shared:lintRelease)
+  release_tasks=()
   for variant in DevRelease ProdRelease; do
     release_tasks+=(":androidApp:lint${variant}" ":androidApp:assemble${variant}")
   done
