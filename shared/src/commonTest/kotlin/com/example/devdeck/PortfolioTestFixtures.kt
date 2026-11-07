@@ -9,9 +9,7 @@ internal fun testPortfolio(): PortfolioData = PortfolioData(
         title = "Developer",
         bio = "Builds apps",
         location = "Philippines",
-        yearsExperience = "One year",
-        playStoreAppsCount = 0,
-        coreFocus = listOf("Kotlin")
+        yearsExperience = "One year"
     ),
     skills = emptyList(),
     experiences = emptyList(),

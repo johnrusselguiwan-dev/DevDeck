@@ -5,15 +5,6 @@
         "bio": "I build Android features with Kotlin and Jetpack Compose at HeroApps. I contributed to two published game guides through champion browsing and search, Firebase authentication, in-app purchases and Google Play releases. My EarnPH work covers phone OTP, location and QR check-in integrations. Open to onsite or remote Android roles in the Philippines and international remote roles.",
         "location": "Camarines Norte, Philippines",
         "yearsExperience": "Android developer at HeroApps since February 2026",
-        "playStoreAppsCount": 2,
-        "coreFocus": [
-            "Kotlin, Jetpack Compose & Android SDK",
-            "MVVM, Coroutines & StateFlow",
-            "REST APIs, Retrofit & OkHttp",
-            "Firebase authentication, location & QR check-in",
-            "Google Play Billing & production releases",
-            "Kotlin Multiplatform & Compose Multiplatform"
-        ],
         "resumeUrl": "https://johnrusselguiwan.web.app/resume/John_Russel_Guiwan_Resume.pdf",
         "androidDownloadUrl": "https://github.com/johnrusselguiwan-dev/DevDeck/releases/tag/v1.0",
         "websiteUrl": "https://johnrusselguiwan.web.app"
@@ -366,26 +357,22 @@
         {
             "id": "soc1",
             "platform": "GitHub",
-            "url": "https://github.com/johnrusselguiwan-dev",
-            "iconIdentifier": "github"
+            "url": "https://github.com/johnrusselguiwan-dev"
         },
         {
             "id": "soc2",
             "platform": "LinkedIn",
-            "url": "https://www.linkedin.com/in/john-russel-guiwan-202391183/",
-            "iconIdentifier": "linkedin"
+            "url": "https://www.linkedin.com/in/john-russel-guiwan-202391183/"
         },
         {
             "id": "soc3",
             "platform": "Email",
-            "url": "mailto:russelguiwan@gmail.com",
-            "iconIdentifier": "email"
+            "url": "mailto:russelguiwan@gmail.com"
         },
         {
             "id": "soc4",
             "platform": "Phone",
-            "url": "tel:+639669869030",
-            "iconIdentifier": "phone"
+            "url": "tel:+639669869030"
         }
     ]
 }

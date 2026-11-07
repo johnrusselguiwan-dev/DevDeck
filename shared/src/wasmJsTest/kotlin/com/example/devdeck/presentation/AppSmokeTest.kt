@@ -72,7 +72,14 @@ class AppSmokeTest {
             assertEquals("LIGHT", storedBrowserTheme())
             assertSame(unrelated.koin, GlobalContext.getOrNull())
             onAllNodesWithText("Contact").onFirst().performClick()
-            awaitIdle()
+            withContext(Dispatchers.Default) {
+                withTimeout(10_000) {
+                    while (onAllNodesWithText("Share portfolio").fetchSemanticsNodes().isEmpty()) {
+                        awaitIdle()
+                        delay(10)
+                    }
+                }
+            }
             onNodeWithText("Share portfolio").assertExists()
         } finally {
             owner.lifecycle.currentState = Lifecycle.State.DESTROYED

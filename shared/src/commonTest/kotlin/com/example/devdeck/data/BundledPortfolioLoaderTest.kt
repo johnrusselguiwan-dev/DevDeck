@@ -34,9 +34,7 @@ class BundledPortfolioLoaderTest {
             title = "Developer",
             bio = "Builds apps",
             location = "Philippines",
-            yearsExperience = "One year",
-            playStoreAppsCount = 1,
-            coreFocus = listOf("Kotlin")
+            yearsExperience = "One year"
         ),
         skills = listOf(Skill("skill", "Kotlin", SkillCategory.MOBILE_DEV, "Language", "Mobile development")),
         experiences = listOf(
@@ -52,7 +50,7 @@ class BundledPortfolioLoaderTest {
             )
         ),
         projects = listOf(Project("project", "Portfolio", "Mobile app", "A portfolio", listOf("Kotlin"))),
-        socialLinks = listOf(SocialLink("contact", "Email", "mailto:developer@example.com", "email"))
+        socialLinks = listOf(SocialLink("contact", "Email", "mailto:developer@example.com"))
     )
     private val json = Json { encodeDefaults = true }
     private fun encoded(snapshot: PortfolioData = fixture): String = json.encodeToString(snapshot)
@@ -164,8 +162,7 @@ class BundledPortfolioLoaderTest {
             skills = emptyList(),
             experiences = emptyList(),
             projects = emptyList(),
-            socialLinks = emptyList(),
-            profile = fixture.profile.copy(coreFocus = emptyList())
+            socialLinks = emptyList()
         )
         assertEquals(empty, decodePortfolio(encoded(empty)))
         val expanded = fixture.copy(projects = fixture.projects + fixture.projects.single().copy(id = "another"))
@@ -188,16 +185,14 @@ class BundledPortfolioLoaderTest {
     }
 
     @Test
-    fun invalidDisplayFieldsListsAndCountsFailWithContext() {
+    fun invalidDisplayFieldsAndListsFailWithContext() {
         val invalid = listOf(
             fixture.copy(profile = fixture.profile.copy(name = " ")),
-            fixture.copy(profile = fixture.profile.copy(playStoreAppsCount = -1)),
-            fixture.copy(profile = fixture.profile.copy(coreFocus = listOf(""))),
             fixture.copy(skills = listOf(fixture.skills.single().copy(specialty = ""))),
             fixture.copy(experiences = listOf(fixture.experiences.single().copy(highlights = listOf("")))),
             fixture.copy(projects = listOf(fixture.projects.single().copy(techBadges = listOf("")))),
             fixture.copy(projects = listOf(fixture.projects.single().copy(contributions = listOf(" ")))),
-            fixture.copy(socialLinks = listOf(fixture.socialLinks.single().copy(iconIdentifier = "")))
+            fixture.copy(socialLinks = listOf(fixture.socialLinks.single().copy(platform = "")))
         )
         invalid.forEach { snapshot -> assertFailsWith<IllegalArgumentException> { decodePortfolio(encoded(snapshot)) } }
         val failure = assertFailsWith<IllegalArgumentException> { validatePortfolio(invalid.first()) }

@@ -72,7 +72,7 @@ if ! "$web_only"; then
   done
 fi
 if "$all_variants"; then
-  gradle_tasks+=(:shared:assembleAndroidDeviceTest)
+  gradle_tasks+=(:shared:assembleAndroidDeviceTest :androidApp:assembleDevDebugAndroidTest)
 fi
 if "$browser"; then
   gradle_tasks+=(:shared:wasmJsBrowserTest :shared:wasmJsBrowserDistribution)
