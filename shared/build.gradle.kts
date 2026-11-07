@@ -4,7 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.kotlinSerialization)
-    alias(libs.plugins.androidLibrary)
+    alias(libs.plugins.androidMultiplatformLibrary)
+    alias(libs.plugins.androidLint)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 }
@@ -21,7 +22,6 @@ val generatePortfolioOverview by tasks.registering(Exec::class) {
     outputs.dir(output)
     commandLine("node", generator.absolutePath, output.get().file("overview.html").asFile.absolutePath)
 }
-
 
 kotlin {
     listOf(
@@ -50,20 +50,41 @@ kotlin {
         binaries.executable()
     }
     
-    androidTarget {
+    android {
+        namespace = "com.example.devdeck.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        androidResources.enable = true
+        withHostTest {}
+        withDeviceTestBuilder {
+            sourceSetTreeName = "test"
+        }.configure {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
+        lint {
+            abortOnError = true
+            checkDependencies = true
+            ignoreTestSources = true
+            error += listOf("HardcodedText", "ResourceAsColor")
+            disable += listOf("QueryAllPackagesPermission")
+            htmlReport = true
+            xmlReport = true
+            sarifReport = true
+        }
     }
-    
+
     sourceSets {
         wasmJsMain {
             resources.srcDir(generatePortfolioOverview)
         }
         androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.androidx.core.ktx)
         }
         commonMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(compose.components.resources)
             implementation(libs.compose.runtime)
@@ -75,7 +96,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            
+
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
@@ -84,38 +105,13 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }
-        androidInstrumentedTest.dependencies {
+        wasmJsTest.dependencies {
+            implementation(libs.compose.uiTest)
+        }
+        getByName("androidDeviceTest").dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.androidx.testExt.junit)
             implementation(libs.androidx.test.runner)
         }
-    }
-}
-
-dependencies {
-    add("debugImplementation", libs.compose.uiTooling)
-}
-
-android {
-    namespace = "com.example.devdeck.shared"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    lint {
-        abortOnError = true
-        checkDependencies = true
-        ignoreTestSources = true
-        error += listOf("HardcodedText", "ResourceAsColor")
-        disable += listOf("QueryAllPackagesPermission")
-        htmlReport = true
-        xmlReport = true
-        sarifReport = true
-    }
-    defaultConfig {
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
     }
 }

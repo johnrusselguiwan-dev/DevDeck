@@ -3,7 +3,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
 }
@@ -21,6 +20,7 @@ fun releaseSigningProperty(name: String): String =
 
 dependencies {
     implementation(project(":shared"))
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
     implementation(libs.compose.uiToolingPreview)
