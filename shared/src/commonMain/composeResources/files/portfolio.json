@@ -1,18 +1,19 @@
 {
     "profile": {
         "name": "John Russel A. Guiwan",
-        "title": "Junior Android Developer",
-        "bio": "I build Android features with Kotlin and Jetpack Compose at HeroApps. I contributed to two published game guides through champion browsing and search, Firebase authentication, in-app purchases and Google Play releases. My EarnPH work covers phone OTP, location and QR check-in integrations. Open to onsite or remote Android roles in the Philippines and international remote roles.",
+        "title": "Android Developer Trainee",
+        "bio": "I am an Android Developer Trainee at HeroApps, following an OJT internship. I contribute Kotlin and Jetpack Compose features within existing team codebases: LoL browsing, search, purchases, ads and release work; MLBB Firebase sign-in/sign-up and Figma-guided UI; and EarnPH shared Kotlin event joining, QR validation and client-side polygon checks. I collaborate with senior developers, backend developers, project managers and QA testers. I use Gemini and, more recently, Codex as development aids; the project descriptions distinguish my contributions from existing team code and reused patterns.",
         "location": "Camarines Norte, Philippines",
-        "yearsExperience": "Android developer at HeroApps since February 2026",
+        "yearsExperience": "HeroApps trainee since May 2026; OJT February–May 2026",
         "playStoreAppsCount": 2,
         "coreFocus": [
             "Kotlin, Jetpack Compose & Android SDK",
-            "MVVM, Coroutines & StateFlow",
-            "REST APIs, Retrofit & OkHttp",
-            "Firebase authentication, location & QR check-in",
-            "Google Play Billing & production releases",
-            "Kotlin Multiplatform & Compose Multiplatform"
+            "Coroutines, StateFlow & existing MVVM/MVI patterns",
+            "Client REST APIs: Retrofit, OkHttp & Ktor",
+            "Firebase authentication & event QR validation",
+            "Client-side point-in-polygon ray casting",
+            "LoL one-time purchases, ads & Play Console releases",
+            "Kotlin Multiplatform commonMain feature work"
         ],
         "resumeUrl": "https://johnrusselguiwan.web.app/resume/John_Russel_Guiwan_Resume.pdf",
         "androidDownloadUrl": "https://github.com/johnrusselguiwan-dev/DevDeck/releases/tag/v1.0",
@@ -42,17 +43,17 @@
         },
         {
             "id": "s4",
-            "name": "GPS & QR Check-In",
+            "name": "Event Check-In, QR Validation & Polygon Checks",
             "category": "MOBILE_DEV",
             "specialty": "Hands-on use",
-            "description": "Implemented or substantially modified EarnPH location, polygon-geofence and QR check-in flows. The shared QR scanner uses KScan."
+            "description": "Extended EarnPH event joining and check-in in shared Kotlin, including QR parsing and target-event validation using the existing KScan scanner. Implemented/adapted client-side point-in-polygon checks via ray casting, integrated with existing location updates."
         },
         {
             "id": "s5",
-            "name": "Retrofit, OkHttp & REST APIs",
+            "name": "Retrofit, OkHttp, Ktor & REST APIs",
             "category": "MOBILE_DEV",
             "specialty": "Hands-on use",
-            "description": "Integrated mobile features with REST APIs and worked with backend developers on endpoint requirements."
+            "description": "Integrated Android and shared Kotlin features with client REST APIs, using Retrofit/OkHttp in Android projects and Ktor in EarnPH. Collaborated with the backend developer on endpoint requirements."
         },
         {
             "id": "s15",
@@ -66,49 +67,49 @@
             "name": "Kotlin & Compose Multiplatform",
             "category": "CROSS_PLATFORM",
             "specialty": "Learning through projects",
-            "description": "Shared Kotlin logic and Compose UI through EarnPH and DevDeck. DevDeck has public Web and Android releases; iOS setup and testing remain areas of limited experience."
+            "description": "Shared commonMain feature implementation through EarnPH and Android/Web portfolio work through DevDeck. DevDeck is a live website with an Android APK on GitHub Releases. An iOS target exists, but I have not personally tested iOS."
         },
         {
             "id": "s7",
             "name": "Multi-Module Android Projects",
             "category": "ARCHITECTURE",
             "specialty": "Hands-on use",
-            "description": "Worked in the shared MLBB/LoL Gradle project, implementing features within its existing core and feature modules."
+            "description": "Worked within the existing shared MLBB/LoL multi-module Gradle project, extending feature/data code and configuring scoped LoL Hilt database and repository bindings."
         },
         {
             "id": "s8",
             "name": "MVVM, Clean Architecture & UI State",
             "category": "ARCHITECTURE",
             "specialty": "Practical familiarity",
-            "description": "Worked within existing presentation, domain and data layers using MVVM/MVI patterns, StateFlow-based UI state and basic unidirectional data flow."
+            "description": "Applied existing MVVM/MVI-style and layered project patterns, with Coroutines, StateFlow, SharedFlow, state hoisting and basic unidirectional data flow. These are patterns I work within and continue to learn."
         },
         {
             "id": "s9",
             "name": "Koin & Hilt",
             "category": "ARCHITECTURE",
             "specialty": "Hands-on use",
-            "description": "Used Koin in multiplatform projects and Hilt in the shared MLBB/LoL Android project for dependency injection."
+            "description": "Created or modified scoped LoL Hilt bindings and EarnPH feature-level Koin bindings within existing team dependency-injection setups."
         },
         {
             "id": "s10",
             "name": "Google Play Console & Billing",
             "category": "DEVOPS",
             "specialty": "Hands-on use",
-            "description": "Handled LoL Play Console setup and internal, closed and open testing through production. Created products and implemented donation and remove-ads purchases."
+            "description": "Personally handled LoL Play Console setup and internal, closed and open testing through production. Created one-time donation and remove-ads products and integrated their purchase flows using the existing shared billing manager; used Firebase App Distribution separately for QA builds."
         },
         {
             "id": "s11",
             "name": "Firebase Services",
             "category": "DEVOPS",
             "specialty": "Hands-on use",
-            "description": "Authentication, Firestore, Cloud Messaging, Crashlytics, Remote Config and App Distribution. Contributions include MLBB login/sign-up and EarnPH OTP, notifications and Crashlytics."
+            "description": "Implemented MLBB email/password sign-in/sign-up and integrated Android FCM/client notification features in EarnPH. Extended EarnPH’s existing phone OTP flow and modified existing Crashlytics reporting to reduce sensitive detail. Contributed to LoL Remote Config data-version and force-update behavior."
         },
         {
             "id": "s16",
             "name": "Git & Team Collaboration",
             "category": "DEVOPS",
             "specialty": "Hands-on use",
-            "description": "Feature branches and pull requests; collaborated with backend developers to specify and integrate REST API endpoints and implemented UI from Figma designs."
+            "description": "Participated in sprint planning, GitHub feature tickets, weekly coordination and deadlines. Developed scoped features on dedicated Git branches, coordinated with PMs, QA testers and backend developers, and submitted changes through the team’s pull-request and merge workflow."
         },
         {
             "id": "s12",
@@ -121,32 +122,41 @@
             "id": "s13",
             "name": "JavaScript & Game Data Scripts",
             "specialty": "Hands-on use",
-            "description": "Built a LoL data-fetching script with champion statistics, rankings and tier-list data, and a working MLBB patch-note scraper.",
+            "description": "Built/adapted LoL JavaScript tools for Data Dragon/CommunityDragon and Riot-related data, champion statistics, rankings and tier lists. Prepared datasets for another developer’s Draft Master feature and built/adapted an MLBB patch-note scraper.",
             "category": "CROSS_PLATFORM"
         },
         {
             "id": "s14",
             "name": "React, Node.js & MySQL",
             "specialty": "Academic project use",
-            "description": "Used React, Node.js, Express.js, MySQL and Tailwind CSS for MB_MIS, a museum catalog and appointment-management capstone.",
+            "description": "Used React, Node.js, Express.js, MySQL and Tailwind CSS in the team MB_MIS museum-management capstone, covering artifact cataloging, appointment scheduling and a public landing page.",
             "category": "CROSS_PLATFORM"
+        },
+        {
+            "id": "s17",
+            "name": "Linux Mint, Android Studio, Git & Gradle",
+            "category": "DEVOPS",
+            "specialty": "Development environment",
+            "description": "Regularly use Linux Mint as my development operating system, with Android Studio, Git and Gradle. Follow the team’s descriptive commit and Git/Gitmoji conventions."
         }
     ],
     "experiences": [
         {
             "id": "exp1",
-            "role": "Junior Android Developer",
+            "role": "Android Developer Trainee (previously OJT Intern)",
             "company": "HeroApps Software Development Services",
-            "period": "Feb 12, 2026 – Present",
+            "period": "May 9, 2026 – Present · OJT: Feb 12 – May 8, 2026",
             "isCurrent": true,
-            "summary": "Contribute to two published Android guides, MLBB and LoL, and to EarnPH, a check-in and rewards app in internal testing. My work spans Compose UI, authentication, device/API integrations and LoL purchases and production releases.",
+            "summary": "Continued as an Android Developer Trainee after OJT at HeroApps. Across this engagement, contributed features to the published MLBB and LoL guides and to EarnPH, which remains in internal testing, within existing team architectures and infrastructure.",
             "highlights": [
-                "Implemented LoL champion browsing, filters, details and a shared search bar for champion, item and summoner-spell screens.",
-                "Implemented MLBB Firebase Authentication login/sign-up and contributed to its redesign following Figma designs.",
-                "Implemented or substantially modified EarnPH phone OTP, GPS/polygon geofencing, QR check-in, REST API integration, push notifications and Crashlytics.",
-                "Created LoL Play Console products and implemented donation/remove-ads purchases, plus banner, interstitial and rewarded ads.",
-                "Handled LoL Play Console setup and internal, closed and open testing through production; used Firebase App Distribution and Remote Config.",
-                "Built LoL data-fetching and statistics scripts and an MLBB patch-note scraper; supplied champion data for Draft Master."
+                "Expanded LoL champion browsing with filters, details and shared search across champion, item and summoner-spell screens; configured scoped feature-level Hilt bindings.",
+                "Implemented MLBB Firebase email/password sign-in and sign-up and contributed Compose UI based on team Figma designs and localized resource/data changes.",
+                "Extended EarnPH commonMain event joining, client REST API integration and QR validation/check-in using the existing KScan scanner; implemented/adapted client-side polygon ray-casting checks.",
+                "Extended EarnPH’s existing phone OTP flow, integrated Android FCM/client notification features, and modified existing Crashlytics reporting to reduce sensitive details.",
+                "Created LoL one-time donation/remove-ads products in Play Console and integrated purchases plus banner, interstitial and rewarded ads using existing shared billing/ad components; contributed Remote Config version/force-update handling.",
+                "Personally handled LoL Play Console setup and internal, closed and open testing through production; used Firebase App Distribution separately for QA builds.",
+                "Built/adapted LoL game-data and statistics scripts and an MLBB patch-note scraper; prepared datasets for Draft Master, whose mobile feature was implemented by another developer.",
+                "Participated in ticket-driven sprint work, weekly team coordination, feature branches, PM/QA feedback and the team’s pull-request and merge workflow."
             ],
             "techStack": [
                 "Kotlin",
@@ -154,8 +164,9 @@
                 "Hilt",
                 "Koin",
                 "KMP / CMP",
+                "Ktor",
                 "Firebase",
-                "REST APIs",
+                "Client REST APIs",
                 "JavaScript",
                 "Google Play Billing"
             ],
@@ -191,8 +202,8 @@
         {
             "id": "proj2",
             "title": "MLBB Game Guide",
-            "subtitle": "Flagship · Published Android Guide · Team Contribution",
-            "description": "A published Mobile Legends guide developed by the HeroApps team. My work focuses on user authentication, Compose UI and patch-note collection.",
+            "subtitle": "Published Team Android App · Feature Contributions",
+            "description": "A team-built Mobile Legends Android companion for hero information, builds, patch notes and rankings. I contributed authentication, Figma-guided Compose UI and localized resources/data within the existing shared project.",
             "techBadges": [
                 "Kotlin",
                 "Jetpack Compose",
@@ -205,16 +216,16 @@
             "githubUrl": null,
             "isFeatured": true,
             "contributions": [
-                "Implemented Firebase Authentication login and sign-up.",
-                "Contributed Jetpack Compose UI to the redesign using Figma designs.",
-                "Built a working JavaScript patch-note scraper."
+                "Implemented/contributed Firebase email/password sign-in and sign-up, Compose screens, repository integration and feature-level Hilt bindings.",
+                "Contributed Compose UI from existing team Figma designs and Tagalog/Indonesian localized resources and data/cache changes.",
+                "Built/adapted a JavaScript patch-note scraper for the MLBB guide."
             ]
         },
         {
             "id": "proj3",
             "title": "LoL Game Guide",
             "subtitle": "Published Android Guide · Features & Release",
-            "description": "A published League of Legends guide in the shared MLBB/LoL Android project. I expanded an existing champion list into browsing, search, filters and detail screens.",
+            "description": "A published League of Legends companion within the shared company MLBB/LoL codebase. I expanded an initial champion list with browsing, filters, details and shared search, and contributed monetization, data and release work using existing team foundations.",
             "techBadges": [
                 "Kotlin",
                 "Jetpack Compose",
@@ -227,23 +238,24 @@
             "githubUrl": null,
             "isFeatured": true,
             "contributions": [
-                "Built a shared search bar for champion, item and summoner-spell screens, with search and filters updating UI state.",
-                "Implemented donation and remove-ads purchases with Google Play Billing, plus banner, interstitial and rewarded ads.",
-                "Handled Play Console setup and internal, closed and open testing through production.",
-                "Built game-data/statistics scripts and supplied data for Draft Master, implemented by another developer."
+                "Extended champion lists, filters, detail flows and shared champion/item/summoner-spell search, with feature-level Hilt and repository/data integration.",
+                "Personally created one-time donation and remove-ads products in Play Console and integrated purchases using the existing shared Google Play Billing manager.",
+                "Integrated banner, interstitial and rewarded ad placements using existing shared ad components; contributed Remote Config data-version and force-update behavior.",
+                "Personally handled Play Console internal, closed and open testing through production; used Firebase App Distribution for QA build delivery.",
+                "Built/adapted game-data/statistics tools and prepared datasets for Draft Master, implemented on mobile by another developer."
             ]
         },
         {
             "id": "proj1",
             "title": "EarnPH",
             "subtitle": "Venue Check-In & Rewards · Internal Testing",
-            "description": "A venue check-in and rewards app in internal testing. I work on the Kotlin Multiplatform/Compose Multiplatform app with the backend team; KMP/CMP remain areas of continued learning.",
+            "description": "An existing team KMP/CMP venue check-in and rewards app in internal testing. I extended shared Kotlin event participation and client integrations within its existing Koin, networking, authentication, scanner and backend setup.",
             "techBadges": [
                 "Kotlin Multiplatform",
                 "Compose Multiplatform",
                 "Koin",
-                "REST APIs",
-                "GPS Geofencing",
+                "Ktor / REST APIs",
+                "Polygon Ray Casting",
                 "KScan",
                 "Firebase"
             ],
@@ -251,23 +263,25 @@
             "githubUrl": null,
             "isFeatured": true,
             "contributions": [
-                "Implemented or substantially modified phone OTP login, GPS/location permissions and polygon-geofence check-in flows.",
-                "Implemented or substantially modified QR check-in using KScan and REST API integrations with backend endpoints.",
-                "Implemented or substantially modified Firebase Cloud Messaging notifications and Crashlytics integration."
+                "Extended commonMain event joining, event/QR response models, client REST calls and check-in UI/state integration with the backend developer.",
+                "Extended the existing KScan scanner with QR token/URL parsing and target-event validation/check-in flows.",
+                "Implemented/adapted client-side point-in-polygon ray-casting checks using event polygons and existing GPS/location updates.",
+                "Extended the existing phone OTP/account flows and integrated Android FCM/client notification features.",
+                "Modified existing Crashlytics reporting to reduce sensitive log and exception detail."
             ]
         },
         {
             "id": "proj4",
             "title": "DevDeck Portfolio",
-            "subtitle": "Developer Portfolio · Web & Android Available",
-            "description": "A developer portfolio with public Web and Android releases sharing Compose UI, section navigation, skill filters and system/light/dark themes. Uses Koin, StateFlow and bundled JSON content. Includes an iOS target; iOS runtime verification and release are not confirmed.",
+            "subtitle": "Personal Portfolio · Live Web & GitHub APK",
+            "description": "A personal KMP/CMP portfolio with shared Android/Web Compose UI, responsive layouts, section navigation, skill filters and system/light/dark themes. Uses Koin, StateFlow and bundled JSON content. The Android APK is distributed on GitHub Releases; an iOS target exists but I have not personally tested iOS.",
             "techBadges": [
                 "Kotlin Multiplatform",
                 "Compose Multiplatform",
                 "WasmJS",
                 "Material 3",
-                "Clean Architecture",
-                "Koin"
+                "Koin",
+                "StateFlow"
             ],
             "playStoreUrl": null,
             "githubUrl": "https://github.com/johnrusselguiwan-dev/DevDeck",
@@ -290,7 +304,7 @@
             "id": "proj8",
             "title": "LoL Game Data Scripts",
             "subtitle": "Data Fetching & Statistics · Supporting Tooling",
-            "description": "Built scripts that fetch League of Legends data from Riot sources and process champion statistics, rankings and tier lists for the guide. The repository uses Node.js, Firebase and SQLite.",
+            "description": "Built/adapted JavaScript tools using Data Dragon/CommunityDragon and Riot-related endpoints to prepare LoL datasets and process champion statistics, rankings and project-specific tier lists. Supplied data for another developer’s Draft Master feature.",
             "techBadges": [
                 "JavaScript",
                 "Node.js",
@@ -306,7 +320,7 @@
             "id": "proj9",
             "title": "MLBB Patch Notes Scraper",
             "subtitle": "Patch-Note Collection · Supporting Tooling",
-            "description": "Built a working patch-note scraper for the MLBB guide. The JavaScript CLI collects patch notes and supports publishing them to Firebase Firestore.",
+            "description": "Built/adapted a JavaScript patch-note collection tool for the MLBB guide, with a CLI and Firebase Firestore publishing support.",
             "techBadges": [
                 "JavaScript",
                 "Node.js",
@@ -321,7 +335,7 @@
             "id": "proj5",
             "title": "Museo Bulawan MIS (MB_MIS)",
             "subtitle": "Museum Management Platform · Capstone",
-            "description": "A full-stack capstone with museum artifact cataloging, metadata management, appointment booking and a public landing page. Received the Best in Capstone Project Award at Camarines Norte State College.",
+            "description": "A team academic capstone for museum artifact cataloging, metadata management, appointment scheduling and a public landing page. Used React, Node.js, Express.js, MySQL and Tailwind CSS; received the Best in Capstone Project Award.",
             "techBadges": [
                 "React",
                 "Node.js",
@@ -334,25 +348,10 @@
             "isFeatured": false
         },
         {
-            "id": "proj10",
-            "title": "MangaMarket",
-            "subtitle": "Manga Storefront · Web Project",
-            "description": "A web project with visitor-facing manga browsing and admin pages for products and orders. Used it to practise HTML, CSS, JavaScript and PHP.",
-            "techBadges": [
-                "HTML",
-                "CSS",
-                "JavaScript",
-                "PHP"
-            ],
-            "playStoreUrl": null,
-            "githubUrl": "https://github.com/johnrusselguiwan-dev/MangaMarket",
-            "isFeatured": false
-        },
-        {
             "id": "proj7",
             "title": "Certificate Maker System",
             "subtitle": "Academic Certificate Utility · Desktop",
-            "description": "A C# desktop project for generating and tracking academic certificates. My C# experience is limited.",
+            "description": "An academic C# desktop utility for generating and tracking certificates. My C# experience is limited.",
             "techBadges": [
                 "C# · Familiar",
                 "Desktop"

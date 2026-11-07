@@ -8,24 +8,26 @@ John Russel A. Guiwan’s developer portfolio, built with Kotlin Multiplatform a
 
 - About, Experience, Projects, Skills and Contact in one scrolling feed.
 - Responsive phone and desktop layouts with section navigation.
-- System, light and dark themes with an iOS-inspired monochrome design.
+- Remembered system, light and dark themes with an iOS-inspired monochrome design.
 - Fully visible biographies, project descriptions, experience highlights and skill descriptions.
-- Optional skill-category filters and direct project/contact links.
+- Optional skill-category filters, direct project/contact links and portfolio sharing.
 - Bundled JSON content, with no backend or sign-in required.
 - Downloadable one-page Android resume and a readable HTML portfolio generated from the same content.
 - Separate education details and project contribution lists with published/internal-testing status.
 
 ## Projects
 
-I’m a Junior Android Developer at HeroApps Software Development Services, based in Camarines Norte, Philippines. The portfolio describes my contributions within team projects:
+I’m an Android Developer Trainee at HeroApps Software Development Services, based in Camarines Norte, Philippines. My OJT / Android Developer Intern engagement ran from February 12 to May 8, 2026; I continued as a trainee from May 9, 2026. The portfolio describes scoped contributions within existing team codebases:
 
 | Project | Status | My contributions |
 | --- | --- | --- |
-| [MLBB Game Guide](https://play.google.com/store/apps/details?id=com.heroapps.mlbbguide) | Flagship; published Android app | Firebase login/sign-up, UI redesign contributions and a patch-note scraper |
-| [LoL Game Guide](https://play.google.com/store/apps/details?id=com.heroapps.lolguide) | Published Android app | Champion browsing, search, filters and details; data scripts; purchases and ads; Play Console testing through production |
-| EarnPH | Internal testing; not publicly released | Phone OTP, GPS/geofencing, QR check-in, REST API integration, push notifications and Crashlytics |
+| [MLBB Game Guide](https://play.google.com/store/apps/details?id=com.heroapps.mlbbguide) | Published team Android app | Firebase sign-in/sign-up, Figma-guided Compose UI and localization contributions; patch-note tooling |
+| [LoL Game Guide](https://play.google.com/store/apps/details?id=com.heroapps.lolguide) | Published team Android app | Browsing/search/details and scoped Hilt bindings; created one-time purchase products and integrated billing/ads using existing components; personally handled Play Console testing through production |
+| EarnPH | Internal testing; not publicly released | Shared Kotlin event joining, client REST APIs, existing KScan-based QR validation and client-side polygon ray casting; extended inherited OTP flows and Crashlytics reporting; Android FCM/client notifications |
 
-DevDeck completes the main Kotlin/Compose project cards. A compact Other languages & tools grid includes [CN-Karigusan](https://github.com/johnrusselguiwan-dev/CN_Karigusan_Last), [LoL data scripts](https://github.com/johnrusselguiwan-dev/lolguidescript), the [MLBB patch-note scraper](https://github.com/johnrusselguiwan-dev/mlbbguidepatchnotescript), the award-winning [Museo Bulawan MIS capstone](https://github.com/johnrusselguiwan-dev/Museo-Bulawan-MIS), [MangaMarket](https://github.com/johnrusselguiwan-dev/MangaMarket) and a Certificate Maker System. I’m continuing to learn KMP/CMP through EarnPH and DevDeck.
+DevDeck completes the main Kotlin/Compose project cards, with a live website and an Android APK distributed through GitHub Releases. A compact Other languages & tools grid includes [CN-Karigusan](https://github.com/johnrusselguiwan-dev/CN_Karigusan_Last), [LoL data scripts](https://github.com/johnrusselguiwan-dev/lolguidescript), the [MLBB patch-note scraper](https://github.com/johnrusselguiwan-dev/mlbbguidepatchnotescript), the team [Museo Bulawan MIS capstone](https://github.com/johnrusselguiwan-dev/Museo-Bulawan-MIS) and a Certificate Maker System. I’m continuing to learn KMP/CMP; I have not personally tested iOS.
+
+I work in a ticket-driven team process with sprint planning, weekly coordination, dedicated feature branches, PM/QA feedback and pull-request review. My development environment includes Linux Mint, Android Studio, Git and Gradle. I use Gemini as my primary AI assistant and recently added Codex; these are development aids, not claims of independent authorship or automatically validated code.
 
 ## Development
 
