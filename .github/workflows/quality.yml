@@ -46,3 +46,35 @@ jobs:
             shared/build/reports/
           if-no-files-found: warn
           retention-days: 14
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 40
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx2g
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
+      - name: Compile iOS framework and run shared tests
+        run: |
+          test "$(uname -m)" = arm64
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64 :shared:iosSimulatorArm64Test --max-workers=1 --no-daemon --console=plain
+      - name: Compile Swift iOS host without signing
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/devdeck-ios" CODE_SIGNING_ALLOWED=NO build
+      - name: Upload iOS test reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ios-quality-reports
+          path: shared/build/reports/
+          if-no-files-found: warn
+          retention-days: 14

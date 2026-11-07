@@ -1,8 +1,9 @@
 package com.example.devdeck.data
 
+import com.example.devdeck.ThemePreferences
 import com.example.devdeck.di.appModule
 import com.example.devdeck.domain.model.PortfolioData
-import com.example.devdeck.domain.usecase.GetPortfolioDataUseCase
+import com.example.devdeck.domain.repository.PortfolioRepository
 import com.example.devdeck.shared.generated.resources.Res
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -17,9 +18,9 @@ class BundledPortfolioResourceTest {
     fun productionRepositoryLoadsThePackagedSnapshot() = runTest {
         val bytes = Res.readBytes("files/portfolio.json")
         val expected = Json.decodeFromString<PortfolioData>(bytes.decodeToString(throwOnInvalidSequence = true))
-        val application = koinApplication { modules(appModule) }
+        val application = koinApplication { modules(appModule(ThemePreferences())) }
         try {
-            val snapshot = application.koin.get<GetPortfolioDataUseCase>()().first()
+            val snapshot = application.koin.get<PortfolioRepository>().getPortfolioData().first()
             assertEquals(expected, snapshot)
             snapshot.projects.mapNotNull { it.githubUrl }.forEach { url ->
                 val path = url.removePrefix("https://github.com/").trimEnd('/').split('/')

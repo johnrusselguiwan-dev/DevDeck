@@ -3,4 +3,7 @@
     <string name="app_subtitle">• KMP Portfolio</string>
     <string name="theme_mode_dark">🌙 Dark</string>
     <string name="theme_mode_light">☀️ Light</string>
+    <string name="share_portfolio">Share portfolio</string>
+    <string name="portfolio_link_copied">Portfolio link copied.</string>
+    <string name="portfolio_share_failed">Couldn’t share the portfolio link. Please try again.</string>
 </resources>

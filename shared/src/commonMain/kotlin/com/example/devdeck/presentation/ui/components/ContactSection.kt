@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,19 +34,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.example.devdeck.ShareResult
 import com.example.devdeck.domain.model.DeveloperProfile
 import com.example.devdeck.domain.model.PortfolioResource
 import com.example.devdeck.domain.model.SocialLink
 import com.example.devdeck.getPlatform
+import com.example.devdeck.rememberPortfolioShareLauncher
+import com.example.devdeck.shared.generated.resources.Res
+import com.example.devdeck.shared.generated.resources.portfolio_link_copied
+import com.example.devdeck.shared.generated.resources.portfolio_share_failed
+import com.example.devdeck.shared.generated.resources.share_portfolio
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ResumeButton(
@@ -140,6 +154,7 @@ private fun ContactResources(
             onOpenUrl = onOpenUrl,
             onResourceClick = onResourceClick
         )
+        profile.websiteUrl?.let { url -> SharePortfolioButton(url) }
         val companionUrl = if (isWeb) profile.androidDownloadUrl else profile.websiteUrl
         companionUrl?.let { url ->
             PortfolioResourceLink(
@@ -151,6 +166,39 @@ private fun ContactResources(
                 onResourceClick = onResourceClick
             )
         }
+    }
+}
+
+@Composable
+private fun SharePortfolioButton(url: String) {
+    var sharing by remember { mutableStateOf(false) }
+    var result by remember { mutableStateOf<ShareResult?>(null) }
+    val share = rememberPortfolioShareLauncher {
+        result = it
+        sharing = false
+    }
+    OutlinedButton(
+        onClick = {
+            result = null
+            sharing = true
+            share(url)
+        },
+        enabled = !sharing
+    ) {
+        Text(stringResource(Res.string.share_portfolio))
+    }
+    val message = when (result) {
+        ShareResult.COPIED -> stringResource(Res.string.portfolio_link_copied)
+        ShareResult.FAILED -> stringResource(Res.string.portfolio_share_failed)
+        else -> null
+    }
+    message?.let {
+        Text(
+            text = it,
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -194,8 +242,15 @@ fun SocialLinksRow(
 private fun ContactRow(icon: ImageVector, label: String, value: String, onClick: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth().heightIn(min = 64.dp).clip(RoundedCornerShape(12.dp))
-            .then(if (onClick == null) Modifier else Modifier.clickable(role = Role.Button, onClick = onClick))
-            .padding(8.dp),
+            .then(
+                if (onClick == null) {
+                    Modifier
+                } else {
+                    Modifier.background(MaterialTheme.colorScheme.surface)
+                        .clickable(role = Role.Button, onClick = onClick)
+                }
+            )
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {

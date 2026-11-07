@@ -17,6 +17,14 @@
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       },
       {
+        "source": "/bootstrap.js",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "/platform.js",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
         "source": "/analytics.js",
         "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       },

@@ -2,6 +2,7 @@ package com.example.devdeck.presentation.ui.home
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -50,13 +52,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -66,15 +74,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.devdeck.domain.model.PortfolioResource
+import com.example.devdeck.domain.model.SkillCategory
+import com.example.devdeck.getPlatform
 import com.example.devdeck.presentation.common.WindowWidthSizeClass
 import com.example.devdeck.presentation.common.calculateWindowWidthSizeClass
 import com.example.devdeck.presentation.common.theme.DevDeckTheme
@@ -166,7 +180,8 @@ fun HomeScreen(
                     if (isCompact) {
                         IosStyleMobileLayout(
                             state = state,
-                            viewModel = viewModel,
+                            onThemeSelected = viewModel::setThemeMode,
+                            onSkillCategorySelected = viewModel::filterSkillsByCategory,
                             onOpenUrl = onOpenUrl,
                             onResourceClick = onResourceClick,
                             themeMode = themeMode,
@@ -177,7 +192,8 @@ fun HomeScreen(
                     } else {
                         MacOsStyleSplitLayout(
                             state = state,
-                            viewModel = viewModel,
+                            onThemeSelected = viewModel::setThemeMode,
+                            onSkillCategorySelected = viewModel::filterSkillsByCategory,
                             onOpenUrl = onOpenUrl,
                             onResourceClick = onResourceClick,
                             themeMode = themeMode,
@@ -200,7 +216,8 @@ fun HomeScreen(
 @Composable
 fun MacOsStyleSplitLayout(
     state: HomeUiState.Success,
-    viewModel: HomeViewModel,
+    onThemeSelected: (ThemeMode) -> Unit,
+    onSkillCategorySelected: (SkillCategory?) -> Unit,
     onOpenUrl: (String) -> Unit,
     onResourceClick: (PortfolioResource) -> Unit,
     themeMode: ThemeMode,
@@ -275,7 +292,7 @@ fun MacOsStyleSplitLayout(
 
                                 ThemeDropdownButton(
                                     currentTheme = themeMode,
-                                    onThemeSelected = { viewModel.setThemeMode(it) }
+                                    onThemeSelected = onThemeSelected
                                 )
                             }
 
@@ -365,7 +382,7 @@ fun MacOsStyleSplitLayout(
                             SkillsSection(
                                 skills = state.skills,
                                 selectedCategory = state.selectedSkillCategory,
-                                onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
+                                onCategorySelected = onSkillCategorySelected
                             )
                         }
 
@@ -421,7 +438,8 @@ private fun AboutSummaryCard(
 @Composable
 fun IosStyleMobileLayout(
     state: HomeUiState.Success,
-    viewModel: HomeViewModel,
+    onThemeSelected: (ThemeMode) -> Unit,
+    onSkillCategorySelected: (SkillCategory?) -> Unit,
     onOpenUrl: (String) -> Unit,
     onResourceClick: (PortfolioResource) -> Unit,
     themeMode: ThemeMode,
@@ -430,6 +448,9 @@ fun IosStyleMobileLayout(
     onSectionSelected: (PortfolioSection) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val density = LocalDensity.current
+    val isWeb = getPlatform().isWeb
+    var dockHeightPx by remember { mutableIntStateOf(0) }
     Scaffold(
         modifier = modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets.safeDrawing,
@@ -446,56 +467,13 @@ fun IosStyleMobileLayout(
                 actions = {
                     ThemeDropdownButton(
                         currentTheme = themeMode,
-                        onThemeSelected = { viewModel.setThemeMode(it) }
+                        onThemeSelected = onThemeSelected
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.70f)
                 )
             )
-        },
-        bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f),
-                tonalElevation = 8.dp,
-                modifier = Modifier.clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            ) {
-                PortfolioSection.entries.forEach { section ->
-                    val selected = activeSection == section
-                    val icon: ImageVector = when (section) {
-                        PortfolioSection.ABOUT -> Icons.Default.Person
-                        PortfolioSection.EXPERIENCE -> Icons.Default.DateRange
-                        PortfolioSection.PROJECTS -> Icons.AutoMirrored.Filled.List
-                        PortfolioSection.SKILLS -> Icons.Default.Build
-                        PortfolioSection.CONTACT -> Icons.Default.Email
-                    }
-
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = { onSectionSelected(section) },
-                        icon = {
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = null,
-                                tint = if (selected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        },
-                        label = {
-                            Text(
-                                text = section.title,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
-                            )
-                        },
-                        colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.onSurface,
-                            selectedTextColor = MaterialTheme.colorScheme.onSurface,
-                            indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    )
-                }
-            }
         }
     ) { innerPadding ->
         Box(
@@ -507,8 +485,13 @@ fun IosStyleMobileLayout(
         ) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    top = 12.dp,
+                    end = 16.dp,
+                    bottom = with(density) { dockHeightPx.toDp() } + 36.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(28.dp)
             ) {
                 item(key = PortfolioSection.ABOUT.name) {
@@ -538,7 +521,7 @@ fun IosStyleMobileLayout(
                     SkillsSection(
                         skills = state.skills,
                         selectedCategory = state.selectedSkillCategory,
-                        onCategorySelected = { cat -> viewModel.filterSkillsByCategory(cat) }
+                        onCategorySelected = onSkillCategorySelected
                     )
                 }
 
@@ -549,6 +532,75 @@ fun IosStyleMobileLayout(
                         onOpenUrl = onOpenUrl,
                         onResourceClick = onResourceClick
                     )
+                }
+            }
+
+            BoxWithConstraints(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .widthIn(max = 440.dp)
+                    .fillMaxWidth()
+            ) {
+                val showLabels = maxWidth >= 360.dp && density.fontScale <= 1.3f
+                Surface(
+                    modifier = Modifier.onSizeChanged { dockHeightPx = it.height },
+                    shape = RoundedCornerShape(28.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                    shadowElevation = 6.dp
+                ) {
+                    NavigationBar(
+                        modifier = Modifier.height(if (showLabels) 80.dp else 64.dp),
+                        containerColor = Color.Transparent,
+                        tonalElevation = 0.dp,
+                        windowInsets = WindowInsets(0, 0, 0, 0)
+                    ) {
+                        PortfolioSection.entries.forEach { section ->
+                            NavigationBarItem(
+                                selected = activeSection == section,
+                                onClick = { onSectionSelected(section) },
+                                modifier = Modifier.semantics { contentDescription = section.title },
+                                icon = {
+                                    if (isWeb) {
+                                        Icon(sectionIcon(section), contentDescription = null)
+                                    } else {
+                                        TooltipBox(
+                                            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                                                TooltipAnchorPosition.Above
+                                            ),
+                                            tooltip = { PlainTooltip { Text(section.title) } },
+                                            state = rememberTooltipState(),
+                                            focusable = false,
+                                            hasAction = false
+                                        ) {
+                                            Icon(sectionIcon(section), contentDescription = null)
+                                        }
+                                    }
+                                },
+                                label = if (showLabels) {
+                                    {
+                                        Text(
+                                            text = section.title,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                } else {
+                                    null
+                                },
+                                alwaysShowLabel = false,
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -577,11 +629,15 @@ fun IOSSidebarNavMenu(
             val isSelected = activeSection == section
 
             val bgColor by animateColorAsState(
-                targetValue = if (isSelected) MaterialTheme.colorScheme.onSurface else Color.Transparent,
+                targetValue = if (isSelected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
                 animationSpec = tween(durationMillis = 250)
             )
             val fgColor by animateColorAsState(
-                targetValue = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
+                targetValue = if (isSelected) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 animationSpec = tween(durationMillis = 250)
             )
 
@@ -590,18 +646,24 @@ fun IOSSidebarNavMenu(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(14.dp))
                     .selectable(selected = isSelected, role = Role.Tab) { onSectionSelected(section) },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(14.dp),
                 color = bgColor
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.heightIn(min = 48.dp).padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
+                    Icon(
+                        imageVector = sectionIcon(section),
+                        contentDescription = null,
+                        tint = fgColor,
+                        modifier = Modifier.size(20.dp)
+                    )
                     Text(
                         text = section.title,
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
+                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                         color = fgColor
                     )
                 }
@@ -662,4 +724,12 @@ private fun themeIcon(mode: ThemeMode): ImageVector = when (mode) {
     ThemeMode.SYSTEM -> Icons.Default.BrightnessAuto
     ThemeMode.LIGHT -> Icons.Default.LightMode
     ThemeMode.DARK -> Icons.Default.DarkMode
+}
+
+private fun sectionIcon(section: PortfolioSection): ImageVector = when (section) {
+    PortfolioSection.ABOUT -> Icons.Default.Person
+    PortfolioSection.EXPERIENCE -> Icons.Default.DateRange
+    PortfolioSection.PROJECTS -> Icons.AutoMirrored.Filled.List
+    PortfolioSection.SKILLS -> Icons.Default.Build
+    PortfolioSection.CONTACT -> Icons.Default.Email
 }

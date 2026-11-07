@@ -59,7 +59,7 @@ esac
 
 check_status=0
 if "$browser"; then
-  node --test scripts/analytics.test.mjs scripts/portfolio-overview.test.mjs || check_status=1
+  node --test scripts/analytics.test.mjs scripts/portfolio-overview.test.mjs scripts/platform.test.mjs scripts/bootstrap.test.mjs || check_status=1
 fi
 "$gradle_wrapper" "${gradle_tasks[@]}" --max-workers=1 --continue "$@" --no-daemon || check_status=1
 if "$all_variants"; then

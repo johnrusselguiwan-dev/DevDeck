@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.js.ExperimentalWasmJsInterop::class)
+
 package com.example.devdeck
 
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -6,14 +8,23 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import org.w3c.dom.events.Event
 
+@JsFun(
+    "() => typeof window.devdeckLoadTheme === 'function' && " +
+        "typeof window.devdeckSaveTheme === 'function' && typeof window.devdeckShare === 'function'"
+)
+private external fun platformHelpersReady(): Boolean
+
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     try {
-        document.getElementById("spinner")?.let { it.parentNode?.removeChild(it) }
-
+        check(platformHelpersReady()) { "Portfolio platform helpers did not load" }
         val container = requireNotNull(document.getElementById("portfolio-app")) { "Missing portfolio app container" }
         ComposeViewport(container, configure = { isA11YEnabled = true }) {
             App(
+                onReady = {
+                    document.getElementById("bootstrap-status")?.let { it.parentNode?.removeChild(it) }
+                    window.dispatchEvent(Event("devdeck:ready"))
+                },
                 onResourceClick = { resource ->
                     window.dispatchEvent(Event("devdeck:${resource.name.lowercase()}"))
                 },
@@ -28,6 +39,6 @@ fun main() {
         }
     } catch (e: Throwable) {
         println("WASM Exception during main: ${e.message}")
-        e.printStackTrace()
+        window.dispatchEvent(Event("devdeck:failed"))
     }
 }
