@@ -187,3 +187,40 @@ To inspect the existing APK's separate GitHub download total:
 gh api repos/johnrusselguiwan-dev/DevDeck/releases/tags/v1.0 \
   --jq '.assets[] | select(.name | endswith(".apk")) | {name, download_count}'
 ```
+
+## Publishing a GitHub Release (Android & iOS Appetize)
+
+Use `bash scripts/publish-github-release.sh` to package and publish a downloadable release on GitHub:
+
+- **Dry-run validation (default)**:
+  ```bash
+  bash scripts/publish-github-release.sh
+  ```
+  Validates artifacts, formats the release notes with Appetize and Android instructions, and outputs the exact command without uploading.
+
+- **Publishing to GitHub Releases**:
+  ```bash
+  bash scripts/publish-github-release.sh --publish
+  ```
+  Creates the release using the authenticated `gh` CLI, uploading:
+  - `DevDeck-<VERSION>-prod-release.apk` and its `.sha256` checksum.
+  - `DevDeck-ios-simulator.zip` and its `.sha256` checksum (if present).
+
+### Exporting and Testing the iOS Simulator Build (via Appetize.io)
+
+Because iOS builds require macOS, the repository includes a dedicated workflow `.github/workflows/ios-simulator-export.yml` to compile the ARM64 simulator app:
+
+1. **Build the iOS simulator artifact on GitHub Actions**:
+   ```bash
+   gh workflow run ios-simulator-export.yml
+   ```
+2. **Download the compiled Appetize ZIP**:
+   ```bash
+   gh run download --name DevDeck-Appetize --dir release-artifacts/
+   ```
+3. **Test in browser on Appetize.io**:
+   - Go to [Appetize.io Upload](https://appetize.io/upload).
+   - Upload `DevDeck-ios-simulator.zip`.
+   - Select an iPhone 15/16 device with iOS 17+.
+   - Tap to interact with the live iOS Compose UI directly in your browser.
+
